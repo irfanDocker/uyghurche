@@ -2,7 +2,7 @@
 
 A free, open-source platform for learning the Uyghur language — for kids, families, and anyone in the world who wants to connect with Uyghur culture.
 
-**Live site:** https://Irfandocker.github.io/uyghur-learn
+**Live site:** https://irfanDocker.github.io/uyghurche
 
 ## Features
 
@@ -31,7 +31,7 @@ A free, open-source platform for learning the Uyghur language — for kids, fami
 No build tools needed — just open `index.html` in any browser.
 
 ```bash
-git clone https://github.com/Irfandocker/uyghur-learn.git
+git clone https://github.com/irfanDocker/uyghurche.git
 cd uyghur-learn
 open index.html
 ```
