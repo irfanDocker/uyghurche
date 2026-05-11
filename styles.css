@@ -648,6 +648,144 @@ nav {
 
 .toast.show { transform: translateX(-50%) translateY(0); }
 
+/* ── Level badge (nav) ── */
+.nav-level-badge {
+  display: inline-block;
+  padding: 0.3rem 0.75rem;
+  border-radius: 99px;
+  color: white;
+  font-size: 0.8rem;
+  font-weight: 700;
+  background: #10B981;
+}
+.nav-xp {
+  font-size: 0.8rem;
+  color: rgba(255,255,255,0.85);
+  font-weight: 600;
+}
+
+/* ── XP bar ── */
+.xp-bar-wrap {
+  max-width: 1100px;
+  margin: 0 auto;
+  padding: 0.6rem 1rem;
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  flex-wrap: wrap;
+}
+.xp-bar-track {
+  flex: 1;
+  background: var(--border);
+  border-radius: 99px;
+  height: 10px;
+  overflow: hidden;
+  min-width: 120px;
+}
+.xp-bar-fill {
+  height: 100%;
+  border-radius: 99px;
+  transition: width 0.5s ease, background 0.3s;
+}
+.xp-bar-label {
+  font-size: 0.8rem;
+  color: var(--muted);
+  white-space: nowrap;
+}
+
+/* ── Level cards ── */
+.level-cards-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
+  gap: 1rem;
+  margin-bottom: 1.5rem;
+}
+.level-card {
+  background: white;
+  border-radius: 14px;
+  padding: 1.25rem 1rem;
+  text-align: center;
+  border: 2px solid var(--border);
+  transition: all 0.2s;
+}
+.level-card-current { transform: translateY(-3px); box-shadow: 0 6px 20px rgba(0,0,0,0.1); }
+.level-card-locked { opacity: 0.45; }
+.level-card-emoji { font-size: 2rem; margin-bottom: 0.4rem; }
+.level-card-name { font-weight: 800; font-size: 1rem; margin-bottom: 0.2rem; }
+.level-card-uyghur { font-size: 1rem; direction: rtl; color: var(--muted); margin-bottom: 0.4rem; }
+.level-card-xp { font-size: 0.78rem; color: var(--muted); font-weight: 600; }
+
+/* ── Level pip in vocab table ── */
+.level-pip {
+  display: inline-block;
+  width: 28px;
+  height: 28px;
+  border-radius: 50%;
+  font-size: 0.85rem;
+  line-height: 28px;
+  text-align: center;
+  cursor: default;
+}
+
+/* ── Game level select row ── */
+.game-config-row {
+  display: flex;
+  gap: 0.75rem;
+  align-items: center;
+  flex-wrap: wrap;
+  margin-bottom: 1rem;
+  justify-content: center;
+}
+.game-config-row label { font-size: 0.85rem; color: var(--muted); font-weight: 600; }
+.game-config-row select {
+  padding: 0.35rem 0.65rem;
+  border-radius: 8px;
+  border: 1.5px solid var(--border);
+  font-size: 0.85rem;
+  background: white;
+}
+
+/* ── Level-up overlay ── */
+.levelup-overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(0,0,0,0.6);
+  z-index: 9998;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  animation: fadeIn 0.3s ease;
+}
+.levelup-overlay.hidden { display: none; }
+.levelup-box {
+  background: white;
+  border-radius: 24px;
+  padding: 3rem 2.5rem;
+  text-align: center;
+  max-width: 360px;
+  width: 90%;
+  animation: popIn 0.4s cubic-bezier(0.34,1.56,0.64,1);
+}
+.levelup-emoji { font-size: 5rem; margin-bottom: 0.5rem; }
+.levelup-title { font-size: 1.1rem; color: var(--muted); margin-bottom: 0.25rem; text-transform: uppercase; letter-spacing: 0.08em; }
+.levelup-name { font-size: 2.2rem; font-weight: 800; color: var(--primary); margin-bottom: 0.25rem; }
+.levelup-uyghur { font-size: 1.5rem; direction: rtl; color: var(--muted); margin-bottom: 0.5rem; }
+.levelup-desc { font-size: 0.95rem; color: var(--muted); }
+
+@keyframes fadeIn { from { opacity:0 } to { opacity:1 } }
+@keyframes popIn  { from { transform:scale(0.6); opacity:0 } to { transform:scale(1); opacity:1 } }
+
+/* ── FC level pill ── */
+.fc-level-pip {
+  display: inline-block;
+  padding: 0.2rem 0.7rem;
+  border-radius: 99px;
+  color: white;
+  font-size: 0.8rem;
+  font-weight: 700;
+  margin-bottom: 0.5rem;
+}
+
 /* ── Footer ── */
 footer {
   background: #1E293B;

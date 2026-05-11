@@ -24,9 +24,31 @@
       <button id="nav-games" onclick="showPage('games')">🎮 Games</button>
       <button id="nav-phrases" onclick="showPage('phrases')">💬 Phrases</button>
       <button id="nav-about" onclick="showPage('about')">ℹ️ About</button>
+      <span class="nav-level-badge">🌱 Beginner</span>
+      <span class="nav-xp">0 XP</span>
     </div>
   </div>
 </nav>
+
+<!-- ── XP Bar ── -->
+<div style="background:white;border-bottom:1px solid #E2E8F0">
+  <div class="xp-bar-wrap">
+    <span style="font-size:.85rem;font-weight:700;color:#64748B">XP</span>
+    <div class="xp-bar-track"><div class="xp-bar-fill" style="width:0%"></div></div>
+    <span class="xp-bar-label">0 / 100 XP to Elementary</span>
+  </div>
+</div>
+
+<!-- ── Level-up overlay ── -->
+<div class="levelup-overlay hidden" id="levelup-overlay">
+  <div class="levelup-box">
+    <div class="levelup-emoji" id="lu-emoji">🎉</div>
+    <div class="levelup-title">Level Up!</div>
+    <div class="levelup-name" id="lu-name"></div>
+    <div class="levelup-uyghur" id="lu-uyghur"></div>
+    <div class="levelup-desc" id="lu-desc"></div>
+  </div>
+</div>
 
 <!-- ── Toast ── -->
 <div class="toast" id="toast"></div>
@@ -83,7 +105,7 @@
     <div style="background:white;border-radius:16px;padding:2rem;box-shadow:0 2px 12px rgba(0,0,0,.06);max-width:700px;margin:0 auto">
       <h2 style="color:#2563EB;margin-bottom:.5rem">Your Progress</h2>
       <p style="color:#64748B;margin-bottom:1rem">Words you've mastered so far</p>
-      <div style="font-size:3rem;font-weight:800;color:#10B981"><span id="mastery-count">0</span></div>
+      <div style="font-size:3rem;font-weight:800;color:#10B981"><span id="mastery-count" class="mastery-count">0</span></div>
       <p style="color:#64748B;font-size:.9rem">words mastered ⭐ (star words in the Vocabulary table)</p>
     </div>
   </div>
@@ -127,6 +149,7 @@
             <th>Latin / Romanization</th>
             <th>English</th>
             <th>Pronunciation Tip</th>
+            <th style="width:36px" title="Level">Lvl</th>
             <th>⭐</th>
           </tr>
         </thead>
@@ -152,13 +175,26 @@
     <!-- Game selection -->
     <div id="game-select">
       <div class="games-grid">
+        <!-- Level progress on games page -->
+        <div style="background:white;border-radius:16px;padding:1.5rem;box-shadow:0 2px 12px rgba(0,0,0,.06);margin-bottom:1.5rem">
+          <h3 style="margin-bottom:1rem;color:#2563EB">Your Level Progress</h3>
+          <div class="level-cards-grid" id="level-cards"></div>
+          <div style="font-size:.85rem;color:#64748B;text-align:center">
+            🌱 Earn XP by playing games · Level up to unlock more words!<br>
+            Flashcard flip = +2 XP · Quiz correct = +15 XP · Match pair = +10 XP · Star a word = +5 XP
+          </div>
+        </div>
+
         <div class="game-card">
           <div class="icon">🃏</div>
           <h3>Flashcards</h3>
-          <p>Flip through Uyghur vocabulary cards. Tap to reveal the English meaning. Great for memorizing!</p>
-          <div style="margin-bottom:.75rem">
-            <label style="font-size:.85rem;color:#64748B;font-weight:600">Category:</label>
-            <select id="fc-cat-select" style="margin-left:.5rem;padding:.3rem .6rem;border-radius:8px;border:1px solid #CBD5E1">
+          <p>Flip cards to reveal meanings. Earn +2 XP per card. Great for daily practice!</p>
+          <div class="game-config-row">
+            <label>Level:</label>
+            <select id="fc-level-select" class="game-level-select"></select>
+            <label>Category:</label>
+            <select id="fc-cat-select">
+              <option value="all">All categories</option>
               <option value="greetings">Greetings</option>
               <option value="numbers">Numbers</option>
               <option value="family">Family</option>
@@ -168,20 +204,28 @@
               <option value="body">Body</option>
             </select>
           </div>
-          <button class="btn btn-primary" onclick="startFlashcards(document.getElementById('fc-cat-select').value)">Start Flashcards</button>
+          <button class="btn btn-primary" onclick="startFlashcards()">Start Flashcards</button>
         </div>
 
         <div class="game-card">
           <div class="icon">🧠</div>
           <h3>Quiz</h3>
-          <p>15 multiple-choice questions drawn from all categories. How many can you get right?</p>
+          <p>15 multiple-choice questions for your level. Earn +15 XP per correct answer!</p>
+          <div class="game-config-row">
+            <label>Level:</label>
+            <select id="quiz-level-select" class="game-level-select"></select>
+          </div>
           <button class="btn btn-primary" onclick="startQuiz()">Start Quiz</button>
         </div>
 
         <div class="game-card">
           <div class="icon">🔗</div>
           <h3>Matching Game</h3>
-          <p>Match 6 Uyghur words to their English meanings. Perfect for kids and beginners!</p>
+          <p>Match Uyghur words to English meanings. Earn +10 XP per pair. Great for kids!</p>
+          <div class="game-config-row">
+            <label>Level:</label>
+            <select id="match-level-select" class="game-level-select"></select>
+          </div>
           <button class="btn btn-primary" onclick="startMatching()">Start Matching</button>
         </div>
       </div>
@@ -194,6 +238,7 @@
       <div class="progress-bar"><div class="progress-fill" id="fc-progress" style="width:0%"></div></div>
 
       <div class="flashcard" onclick="flipCard()">
+        <span class="fc-level-pip" id="fc-level-pip"></span>
         <div class="flashcard-uyghur" id="fc-uyghur"></div>
         <div class="flashcard-latin" id="fc-latin"></div>
         <div class="flashcard-answer hidden" id="fc-answer"></div>
