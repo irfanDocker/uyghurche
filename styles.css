@@ -981,6 +981,84 @@ footer a { color: #60A5FA; text-decoration: none; }
 
 .hidden { display: none !important; }
 
+/* ── Letter modal pronunciation ── */
+.letter-modal-howto {
+  font-size: 1rem;
+  font-weight: 700;
+  margin-bottom: 1rem;
+  padding: .4rem .9rem;
+  background: #F8FAFC;
+  border-radius: 99px;
+  display: inline-block;
+}
+
+/* ── Pronunciation guide section ── */
+.pronun-guide-bar {
+  margin-bottom: 1rem;
+}
+.pronun-toggle-btn {
+  border-color: var(--primary);
+  color: var(--primary);
+  font-size: .9rem;
+}
+
+.pronun-guide {
+  background: white;
+  border-radius: 16px;
+  padding: 1.25rem;
+  margin-bottom: 1.5rem;
+  box-shadow: 0 2px 10px rgba(0,0,0,.06);
+}
+.pronun-guide h3 {
+  font-size: 1rem;
+  color: var(--primary);
+  margin-bottom: .75rem;
+}
+
+.pronun-row {
+  display: grid;
+  grid-template-columns: 2.5rem 2.5rem 4rem 1fr;
+  align-items: center;
+  gap: .5rem;
+  padding: .45rem .5rem;
+  border-radius: 8px;
+  cursor: pointer;
+  transition: background .15s;
+  font-size: .9rem;
+}
+.pronun-row:hover { background: #EFF6FF; }
+.pronun-row:nth-child(even) { background: #F8FAFC; }
+.pronun-row:nth-child(even):hover { background: #EFF6FF; }
+
+.pronun-arabic   { font-size: 1.4rem; direction: rtl; color: var(--primary); font-weight: 700; }
+.pronun-latin-col { font-weight: 700; color: #475569; }
+.pronun-name-col  { color: #64748B; font-size: .82rem; }
+.pronun-how-col   { color: #1E293B; font-style: italic; }
+
+/* ── Level test button & info ── */
+.level-up-info {
+  background: #F8FAFC;
+  border-radius: 12px;
+  padding: .85rem 1rem;
+  margin-top: .75rem;
+  font-size: .85rem;
+}
+.level-up-info-row { color: #475569; margin-bottom: .5rem; font-weight: 600; }
+.level-up-xp-list  { display: flex; flex-wrap: wrap; gap: .5rem .75rem; color: #64748B; }
+
+.level-test-btn {
+  font-size: 1.05rem;
+  padding: .75rem 2rem;
+  border-radius: 14px;
+  box-shadow: 0 4px 14px rgba(37,99,235,.25);
+}
+.level-test-hint {
+  font-size: .82rem;
+  color: #64748B;
+  margin-top: .5rem;
+  min-height: 1.2em;
+}
+
 /* ════════════════════════════════════════════
    VOCABULARY BUILDER
 ════════════════════════════════════════════ */

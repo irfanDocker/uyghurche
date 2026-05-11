@@ -119,10 +119,11 @@ function showPage(id) {
   document.getElementById('nav-' + id).classList.add('active');
   currentPage = id;
   window.scrollTo(0, 0);
-  if (id === 'vocab')  renderVocabTable(currentVocabCategory);
-  if (id === 'alphabet') renderAlphabet();
+  if (id === 'vocab')    renderVocabTable(currentVocabCategory);
+  if (id === 'alphabet') { renderAlphabet(); buildPronunTable(); }
   if (id === 'phrases')  renderPhrases();
   if (id === 'study')    renderStudyHome();
+  if (id === 'games')    updateLevelTestHint();
 }
 
 // ── Vocabulary Builder ──
@@ -349,6 +350,8 @@ function showLetterDetail(idx) {
   document.getElementById('lm-letter-big').style.color = color;
   document.getElementById('lm-name').textContent = l.name;
   document.getElementById('lm-romanization').textContent = `"${l.latin}"`;
+  document.getElementById('lm-how-to-read').textContent = '🔊 Sounds like: ' + l.howToRead;
+  document.getElementById('lm-how-to-read').style.color = color;
   document.getElementById('lm-example-uyghur').textContent = l.example;
   document.getElementById('lm-example-latin').textContent = l.exampleLatin;
   document.getElementById('lm-example-en').textContent = l.exampleEn;
@@ -356,6 +359,28 @@ function showLetterDetail(idx) {
 
   document.getElementById('letter-modal-overlay').classList.remove('hidden');
   speakCurrentLetter();
+}
+
+// ── Pronunciation guide table ──
+function togglePronunGuide() {
+  const guide = document.getElementById('pronun-guide');
+  const btn   = document.querySelector('.pronun-toggle-btn');
+  const nowHidden = guide.classList.toggle('hidden');
+  btn.textContent = nowHidden ? '📖 Show Pronunciation Guide' : '📖 Hide Pronunciation Guide';
+  if (!nowHidden && !document.getElementById('pronun-table').innerHTML) {
+    buildPronunTable();
+  }
+}
+
+function buildPronunTable() {
+  document.getElementById('pronun-table').innerHTML =
+    UYGHUR_DATA.alphabet.map((l, i) => `
+      <div class="pronun-row" onclick="showLetterDetail(${i})">
+        <span class="pronun-arabic">${l.letter}</span>
+        <span class="pronun-latin-col">${l.latin}</span>
+        <span class="pronun-name-col">${l.name}</span>
+        <span class="pronun-how-col">${l.howToRead}</span>
+      </div>`).join('');
 }
 
 function closeLetterModal() {
@@ -518,6 +543,44 @@ function stopGame() {
   refreshLevelSelects();
 }
 
+// ── Level Test ──
+let isLevelTest = false;
+
+function updateLevelTestHint() {
+  const hint = document.getElementById('level-test-hint');
+  if (!hint) return;
+  const lvl  = getCurrentLevelData();
+  const next = getNextLevelData();
+  hint.textContent = next
+    ? `Test your ${lvl.emoji} ${lvl.name} knowledge — pass 80%+ to earn +50 XP toward ${next.emoji} ${next.name}!`
+    : '🏆 You have reached the highest level!';
+}
+
+function startLevelTest() {
+  const lvl = getCurrentLevelData();
+  isLevelTest = true;
+  quizLevel = lvl.level;
+  quizWords = shuffle(getWordsForLevel(lvl.level)).slice(0, 15);
+  quizIdx = 0; quizScore = 0; quizTotal = quizWords.length;
+
+  document.getElementById('game-select').classList.add('hidden');
+  const area = document.getElementById('quiz-area');
+  area.style.display = 'block';
+  area.innerHTML = `
+    <button class="btn btn-outline" style="border-color:#64748B;color:#64748B;margin-bottom:1rem" onclick="stopGame()">← Back</button>
+    <div style="text-align:center;background:${lvl.color}18;border:2px solid ${lvl.color};border-radius:14px;padding:.75rem;margin-bottom:1rem;font-weight:700;color:${lvl.color}">
+      🎯 Level Test — ${lvl.emoji} ${lvl.name} &nbsp;·&nbsp; Pass 80%+ to earn +50 XP
+    </div>
+    <div class="quiz-score" id="quiz-score"></div>
+    <div class="progress-bar"><div class="progress-fill" id="quiz-progress" style="width:0%"></div></div>
+    <div class="quiz-question">
+      <div class="quiz-word" id="quiz-word"></div>
+      <div class="quiz-latin" id="quiz-latin"></div>
+    </div>
+    <div class="quiz-options" id="quiz-options"></div>`;
+  renderQuizQuestion();
+}
+
 // ── Quiz Game ──
 function startQuiz() {
   const sel = document.getElementById('quiz-level-select');
@@ -578,15 +641,39 @@ function checkAnswer(btn, chosen, correct) {
 
 function showQuizResult() {
   const pct = Math.round((quizScore / quizTotal) * 100);
-  const emoji = pct >= 80 ? '🏆' : pct >= 60 ? '👍' : '📚';
+  const passed = pct >= 80;
+  let headline, emoji, extra = '';
+
+  if (isLevelTest) {
+    isLevelTest = false;
+    const lvl  = getCurrentLevelData();
+    const next = getNextLevelData();
+    if (passed) {
+      addXP(50);
+      emoji    = '🏆';
+      headline = 'Level Test Passed!';
+      extra    = `<p style="color:#10B981;font-weight:700;font-size:1.1rem;margin-bottom:.5rem">+50 XP bonus earned! 🎉</p>
+                  ${next ? `<p style="color:#64748B">Keep going — you're working toward ${next.emoji} ${next.name}!</p>` : '<p style="color:#8B5CF6">You\'ve reached the highest level! 🌟</p>'}`;
+    } else {
+      emoji    = '💪';
+      headline = `${lvl.emoji} ${lvl.name} — Keep Practicing!`;
+      extra    = `<p style="color:#64748B;margin-bottom:.5rem">You need 80% to pass. Practice more and try again!</p>
+                  <p style="color:#64748B;font-size:.9rem">Use 📚 Vocabulary Builder and 🃏 Flashcards to study.</p>`;
+    }
+  } else {
+    emoji    = passed ? '🏆' : pct >= 60 ? '👍' : '📚';
+    headline = 'Quiz Complete!';
+  }
+
   document.getElementById('quiz-area').innerHTML = `
     <div style="text-align:center;background:white;border-radius:20px;padding:3rem 2rem;box-shadow:0 4px 20px rgba(0,0,0,.1)">
       <div style="font-size:4rem">${emoji}</div>
-      <h2 style="font-size:2rem;margin:.5rem 0">Quiz Complete!</h2>
-      <p style="font-size:1.3rem;color:#64748B;margin-bottom:1.5rem">
+      <h2 style="font-size:2rem;margin:.5rem 0">${headline}</h2>
+      <p style="font-size:1.3rem;color:#64748B;margin-bottom:1rem">
         <strong style="color:#2563EB">${quizScore} / ${quizTotal}</strong> correct (${pct}%)
       </p>
-      <div style="display:flex;gap:1rem;justify-content:center;flex-wrap:wrap">
+      ${extra}
+      <div style="display:flex;gap:1rem;justify-content:center;flex-wrap:wrap;margin-top:1.5rem">
         <button class="btn btn-primary" onclick="startQuiz()">Try Again</button>
         <button class="btn btn-outline" style="border-color:#2563EB;color:#2563EB" onclick="stopGame()">Back to Games</button>
       </div>

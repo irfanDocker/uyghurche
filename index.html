@@ -63,6 +63,7 @@
     <div class="letter-modal-letter-big" id="lm-letter-big"></div>
     <div class="letter-modal-name" id="lm-name"></div>
     <div class="letter-modal-romanization" id="lm-romanization"></div>
+    <div class="letter-modal-howto" id="lm-how-to-read"></div>
     <div class="letter-modal-example-box">
       <div class="letter-modal-example-uyghur" id="lm-example-uyghur"></div>
       <div class="letter-modal-example-latin" id="lm-example-latin"></div>
@@ -140,7 +141,18 @@
 <div class="page" id="page-alphabet">
   <div class="section">
     <h1 class="section-title">🔤 Uyghur Alphabet</h1>
-    <p class="section-sub">Uyghur is written right-to-left using the Perso-Arabic script. There are 32 letters. Click a card to see details.</p>
+    <p class="section-sub">Uyghur is written right-to-left using the Perso-Arabic script. There are 32 letters. Click any card to hear it and see an example.</p>
+
+    <div class="pronun-guide-bar">
+      <button class="btn btn-outline pronun-toggle-btn" onclick="togglePronunGuide()">
+        📖 Show Pronunciation Guide
+      </button>
+    </div>
+    <div id="pronun-guide" class="pronun-guide hidden">
+      <h3>How to Read Each Letter</h3>
+      <div id="pronun-table"></div>
+    </div>
+
     <div id="alphabet-grid" class="alphabet-grid"></div>
   </div>
 </div>
@@ -205,9 +217,21 @@
         <div style="background:white;border-radius:16px;padding:1.5rem;box-shadow:0 2px 12px rgba(0,0,0,.06);margin-bottom:1.5rem">
           <h3 style="margin-bottom:1rem;color:#2563EB">Your Level Progress</h3>
           <div class="level-cards-grid" id="level-cards"></div>
-          <div style="font-size:.85rem;color:#64748B;text-align:center">
-            🌱 Earn XP by playing games · Level up to unlock more words!<br>
-            Flashcard flip = +2 XP · Quiz correct = +15 XP · Match pair = +10 XP · Star a word = +5 XP
+          <div class="level-up-info">
+            <div class="level-up-info-row">⚡ Earn XP by playing games to unlock higher levels</div>
+            <div class="level-up-xp-list">
+              <span>🃏 Flashcard flip <strong>+2 XP</strong></span>
+              <span>🧠 Quiz correct <strong>+15 XP</strong></span>
+              <span>🔗 Match pair <strong>+10 XP</strong></span>
+              <span>⭐ Star a word <strong>+5 XP</strong></span>
+              <span>🎯 Level Test pass <strong>+50 XP</strong></span>
+            </div>
+          </div>
+          <div style="text-align:center;margin-top:1rem">
+            <button class="btn btn-primary level-test-btn" onclick="startLevelTest()" id="level-test-btn">
+              🎯 Take Level Test
+            </button>
+            <p class="level-test-hint" id="level-test-hint"></p>
           </div>
         </div>
 
@@ -335,9 +359,10 @@
       <div style="background:white;border-radius:16px;padding:2rem;box-shadow:0 2px 12px rgba(0,0,0,.06)">
         <h2 style="font-size:1.3rem;margin-bottom:.75rem;color:#2563EB">🌏 The Uyghur Language</h2>
         <p style="color:#475569;line-height:1.7">
-          Uyghur (<span style="direction:rtl;display:inline-block;font-size:1.2rem">ئۇيغۇر تىلى</span> · <em>Uyghur tili</em>) is a Turkic language spoken by approximately
-          10–15 million people, primarily in the Xinjiang region of China and diaspora communities worldwide.
-          It is closely related to Uzbek and other Central Asian languages.
+          Uyghur (<span style="direction:rtl;display:inline-block;font-size:1.2rem">ئۇيغۇر تىلى</span> · <em>Uyghur tili</em>) is a beautiful Turkic language
+          with a rich literary and cultural heritage spanning over a thousand years.
+          It is closely related to Uzbek, Kazakh, and other Turkic languages of Central Asia.
+          Uyghur is spoken by millions of people across Central Asia and in diaspora communities around the world.
         </p>
       </div>
 
@@ -345,8 +370,8 @@
         <h2 style="font-size:1.3rem;margin-bottom:.75rem;color:#2563EB">✍️ The Script</h2>
         <p style="color:#475569;line-height:1.7">
           Modern Uyghur uses a Perso-Arabic script adapted for Uyghur vowels, written <strong>right to left</strong>.
-          It has 32 letters representing 8 vowels and 24 consonants.
-          A Latin-based romanization system (ULY) and a Cyrillic version also exist.
+          It has 32 letters — 8 vowels and 24 consonants — and is one of the most phonetically complete Arabic-based scripts.
+          A Latin romanization system (ULY — Uyghur Latin Yéziqi) is also used for learning and digital communication.
         </p>
         <div style="margin-top:1rem;padding:1rem;background:#EFF6FF;border-radius:12px;direction:rtl;font-size:2rem;text-align:right;color:#1E40AF;line-height:1.8">
           ئا ئە ب پ ت ج چ خ د ر ز ژ س ش غ ف ق ك گ ڭ ل م ن ھ و ۇ ۆ ۈ ۋ ې ى ي
@@ -354,23 +379,34 @@
       </div>
 
       <div style="background:white;border-radius:16px;padding:2rem;box-shadow:0 2px 12px rgba(0,0,0,.06)">
+        <h2 style="font-size:1.3rem;margin-bottom:.75rem;color:#2563EB">🎶 Culture & Heritage</h2>
+        <p style="color:#475569;line-height:1.7">
+          The Uyghur people have a vibrant culture — famous for their music (the rawap, dutar, and tambur),
+          poetry, cuisine (polo, samsa, lagman), dance, and carpet weaving.
+          Classical Uyghur literature (the <em>Twelve Muqam</em>) is recognized as a UNESCO Intangible Cultural Heritage.
+          Learning this language is a gateway to one of the world's oldest and most beautiful civilizations.
+        </p>
+      </div>
+
+      <div style="background:white;border-radius:16px;padding:2rem;box-shadow:0 2px 12px rgba(0,0,0,.06)">
         <h2 style="font-size:1.3rem;margin-bottom:.75rem;color:#2563EB">💡 Learning Tips</h2>
         <ul style="color:#475569;line-height:2;padding-left:1.5rem">
-          <li>Practice the alphabet first — recognizing letters is the foundation</li>
-          <li>Uyghur vowels are rich — pay attention to ö, ü, é, and the distinction between o and u</li>
-          <li>Word order is Subject-Object-Verb (like Japanese/Korean), e.g. "Men alma yédim" = "I apple ate"</li>
-          <li>Many Uyghur words share roots with Turkish and Uzbek</li>
-          <li>Use flashcards daily — even 5 minutes builds strong memory</li>
-          <li>Try speaking out loud — Uyghur has a beautiful, flowing sound</li>
+          <li>Start with the alphabet — use the 🔤 Alphabet page, click each card to hear it</li>
+          <li>Uyghur vowels are rich — ö, ü, é are different sounds, practice each carefully</li>
+          <li>Word order is Subject–Object–Verb, e.g. "Men alma yédim" = "I ate an apple"</li>
+          <li>Many words share roots with Turkish and Uzbek — use that connection</li>
+          <li>Use the 📚 Vocabulary Builder daily — even 5 minutes builds strong memory</li>
+          <li>Say words out loud — Uyghur has a flowing, musical sound</li>
+          <li>Take the 🎯 Level Test in the Games section to track your progress</li>
         </ul>
       </div>
 
       <div style="background:white;border-radius:16px;padding:2rem;box-shadow:0 2px 12px rgba(0,0,0,.06)">
         <h2 style="font-size:1.3rem;margin-bottom:.75rem;color:#2563EB">🤝 Contribute</h2>
         <p style="color:#475569;line-height:1.7">
-          This project is open source and free forever. If you'd like to add more vocabulary, fix pronunciations,
-          or translate this site into Uyghur, please open a pull request on GitHub.
-          Every contribution helps preserve this beautiful language.
+          This project is free and open source — forever. If you'd like to add vocabulary, improve pronunciations,
+          add audio recordings, or translate the UI into Uyghur, please open a pull request on GitHub.
+          Every contribution helps preserve this beautiful language for future generations.
         </p>
       </div>
     </div>
