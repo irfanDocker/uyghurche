@@ -14,7 +14,7 @@ const UYGHUR_DATA = {
     { letter: "ژ", name: "Zhe", latin: "zh", example: "ژۇرنال", exampleLatin: "zhurnal", exampleEn: "magazine" },
     { letter: "س", name: "Sin", latin: "s", example: "سۇ", exampleLatin: "su", exampleEn: "water" },
     { letter: "ش", name: "Shin", latin: "sh", example: "شام", exampleLatin: "sham", exampleEn: "dinner/evening" },
-    { letter: "غ", name: "Gheyin", latin: "gh", example: "غوز", exampleLatin: "ghuz", exampleEn: "walnut" },
+    { letter: "غ", name: "Ghe", latin: "gh", example: "غاز", exampleLatin: "ghaz", exampleEn: "goose" },
     { letter: "ف", name: "Fe", latin: "f", example: "فىل", exampleLatin: "fil", exampleEn: "elephant" },
     { letter: "ق", name: "Qaf", latin: "q", example: "قوي", exampleLatin: "qoy", exampleEn: "sheep" },
     { letter: "ك", name: "Kaf", latin: "k", example: "كىتاب", exampleLatin: "kitab", exampleEn: "book" },
