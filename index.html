@@ -23,6 +23,7 @@
       <button id="nav-vocab" onclick="showPage('vocab')">📋 Vocabulary</button>
       <button id="nav-games" onclick="showPage('games')">🎮 Games</button>
       <button id="nav-phrases" onclick="showPage('phrases')">💬 Phrases</button>
+      <button id="nav-study" onclick="showPage('study')">📚 Study</button>
       <button id="nav-about" onclick="showPage('about')">ℹ️ About</button>
       <span class="nav-level-badge">🌱 Beginner</span>
       <span class="nav-xp">0 XP</span>
@@ -159,7 +160,10 @@
       <button class="tab-btn" data-cat="colors" onclick="renderVocabTable('colors')">🎨 Colors</button>
       <button class="tab-btn" data-cat="food" onclick="renderVocabTable('food')">🍎 Food</button>
       <button class="tab-btn" data-cat="animals" onclick="renderVocabTable('animals')">🐾 Animals</button>
-      <button class="tab-btn" data-cat="body" onclick="renderVocabTable('body')">🫀 Body</button>
+      <button class="tab-btn" data-cat="body"     onclick="renderVocabTable('body')">🫀 Body</button>
+      <button class="tab-btn" data-cat="clothing" onclick="renderVocabTable('clothing')">👕 Clothing</button>
+      <button class="tab-btn" data-cat="nature"   onclick="renderVocabTable('nature')">🌿 Nature</button>
+      <button class="tab-btn" data-cat="school"   onclick="renderVocabTable('school')">📚 School</button>
     </div>
 
     <div class="vocab-table-wrap">
@@ -224,6 +228,9 @@
               <option value="food">Food</option>
               <option value="animals">Animals</option>
               <option value="body">Body</option>
+              <option value="clothing">Clothing</option>
+              <option value="nature">Nature</option>
+              <option value="school">School</option>
             </select>
           </div>
           <button class="btn btn-primary" onclick="startFlashcards()">Start Flashcards</button>
@@ -365,6 +372,86 @@
           or translate this site into Uyghur, please open a pull request on GitHub.
           Every contribution helps preserve this beautiful language.
         </p>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ════════════════════════════════════════════
+     PAGE: STUDY (Vocabulary Builder)
+════════════════════════════════════════════ -->
+<div class="page" id="page-study">
+  <div class="section">
+    <h1 class="section-title">📚 Vocabulary Builder</h1>
+    <p class="section-sub">Study words one by one. Flip the card to see the meaning, then mark what you know.</p>
+
+    <!-- ── Category selection ── -->
+    <div id="study-home">
+      <div class="study-cats-grid" id="study-cats-grid"></div>
+      <p style="text-align:center;color:#64748B;font-size:.85rem;margin-top:1.5rem">
+        ✓ "Know it!" earns +5 XP and stars the word · Words marked "Still Learning" come back next session
+      </p>
+    </div>
+
+    <!-- ── Active session ── -->
+    <div id="study-session" class="hidden">
+      <div class="study-session-header">
+        <button class="btn btn-outline" style="border-color:#64748B;color:#64748B;padding:.4rem .9rem;font-size:.85rem" onclick="backToStudyHome()">← Categories</button>
+        <div style="display:flex;align-items:center;gap:.6rem">
+          <span class="study-cat-badge" id="study-cat-badge"></span>
+          <span class="study-counter" id="study-counter">1 / 10</span>
+        </div>
+      </div>
+      <div class="study-track"><div class="study-track-fill" id="study-progress" style="width:0%"></div></div>
+
+      <!-- Flip card -->
+      <div class="study-card-wrap" onclick="flipStudyCard()">
+        <div class="study-card-inner" id="study-card-inner">
+          <div class="study-face study-front" id="study-front">
+            <div class="study-level-pill" id="study-level-pill"></div>
+            <div class="study-uyghur" id="study-word-uyghur"></div>
+            <div class="study-tap-hint">👆 Tap to reveal meaning</div>
+          </div>
+          <div class="study-face study-back" id="study-back">
+            <div class="study-english" id="study-word-english"></div>
+            <div class="study-latin" id="study-word-latin"></div>
+            <div class="study-tip-text" id="study-word-tip"></div>
+          </div>
+        </div>
+      </div>
+
+      <div class="study-actions hidden" id="study-actions">
+        <button class="study-btn-learning" onclick="markStudyWord(false)">🔄 Still Learning</button>
+        <button class="study-btn-known"    onclick="markStudyWord(true)">✓ Know it! +5 XP</button>
+      </div>
+      <p class="study-speak-row">
+        <button class="study-speak-btn" onclick="speakStudyWord()">🔊 Listen</button>
+      </p>
+    </div>
+
+    <!-- ── Session complete ── -->
+    <div id="study-complete" class="hidden">
+      <div class="study-complete-box">
+        <div class="study-done-emoji" id="study-done-emoji">🎉</div>
+        <h2 class="study-done-title">Session Complete!</h2>
+        <div class="study-done-stats">
+          <div class="study-done-stat" style="color:#10B981">
+            <div class="stat-num" id="study-done-known">0</div>
+            <div class="stat-lbl">Know it ✓</div>
+          </div>
+          <div class="study-done-stat" style="color:#F59E0B">
+            <div class="stat-num" id="study-done-practicing">0</div>
+            <div class="stat-lbl">Practicing 🔄</div>
+          </div>
+          <div class="study-done-stat" style="color:#8B5CF6">
+            <div class="stat-num" id="study-done-xp">0</div>
+            <div class="stat-lbl">XP earned ⚡</div>
+          </div>
+        </div>
+        <div class="study-done-btns">
+          <button class="btn btn-primary" onclick="repeatStudySession()">🔄 Practice Again</button>
+          <button class="btn btn-outline" style="border-color:#64748B;color:#64748B" onclick="backToStudyHome()">All Categories</button>
+        </div>
       </div>
     </div>
   </div>

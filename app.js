@@ -119,9 +119,193 @@ function showPage(id) {
   document.getElementById('nav-' + id).classList.add('active');
   currentPage = id;
   window.scrollTo(0, 0);
-  if (id === 'vocab') renderVocabTable(currentVocabCategory);
+  if (id === 'vocab')  renderVocabTable(currentVocabCategory);
   if (id === 'alphabet') renderAlphabet();
-  if (id === 'phrases') renderPhrases();
+  if (id === 'phrases')  renderPhrases();
+  if (id === 'study')    renderStudyHome();
+}
+
+// ── Vocabulary Builder ──
+const STUDY_CATS = {
+  greetings: { name: 'Greetings',  emoji: '👋', color: '#10B981' },
+  numbers:   { name: 'Numbers',    emoji: '🔢', color: '#3B82F6' },
+  family:    { name: 'Family',     emoji: '👨‍👩‍👧', color: '#F97316' },
+  colors:    { name: 'Colors',     emoji: '🎨', color: '#EC4899' },
+  food:      { name: 'Food',       emoji: '🍎', color: '#EF4444' },
+  animals:   { name: 'Animals',    emoji: '🐾', color: '#8B5CF6' },
+  body:      { name: 'Body',       emoji: '🫀', color: '#F59E0B' },
+  clothing:  { name: 'Clothing',   emoji: '👕', color: '#06B6D4' },
+  nature:    { name: 'Nature',     emoji: '🌿', color: '#22C55E' },
+  school:    { name: 'School',     emoji: '📚', color: '#6366F1' },
+};
+
+let vocabProgress = JSON.parse(localStorage.getItem('uyghur_vocab_progress') || '{}');
+let studyWords = [];
+let studyIdx = 0;
+let studyFlipped = false;
+let studyKnownCount = 0;
+let studyPracticingCount = 0;
+let studyXPEarned = 0;
+let currentStudyCat = '';
+
+function saveVocabProgress() {
+  localStorage.setItem('uyghur_vocab_progress', JSON.stringify(vocabProgress));
+}
+function getWordProgress(cat, idx) { return vocabProgress[`${cat}_${idx}`] || 'new'; }
+function setWordProgress(cat, idx, status) {
+  vocabProgress[`${cat}_${idx}`] = status;
+  saveVocabProgress();
+}
+
+function renderStudyHome() {
+  const grid = document.getElementById('study-cats-grid');
+  if (!grid) return;
+  grid.innerHTML = Object.entries(STUDY_CATS).map(([key, meta]) => {
+    const words = UYGHUR_DATA.vocabulary[key];
+    if (!words) return '';
+    const total    = words.length;
+    const mastered = words.filter((_, i) => getWordProgress(key, i) === 'mastered').length;
+    const learning = words.filter((_, i) => getWordProgress(key, i) === 'learning').length;
+    const pct = total ? Math.round((mastered / total) * 100) : 0;
+    const allDone  = mastered === total;
+    return `
+      <div class="study-cat-card" onclick="startStudySession('${key}')"
+           style="border-top:4px solid ${meta.color}">
+        <div class="study-cat-top">
+          <span class="study-cat-emoji">${meta.emoji}</span>
+          <span class="study-cat-name">${meta.name}</span>
+        </div>
+        <div class="study-cat-stats">
+          <span style="color:${meta.color};font-weight:700">${mastered}/${total}</span> mastered
+          ${learning ? `<span style="color:#F59E0B"> · ${learning} learning</span>` : ''}
+        </div>
+        <div class="study-cat-bar"><div class="study-cat-bar-fill" style="width:${pct}%;background:${meta.color}"></div></div>
+        <button class="study-cat-btn" style="background:${meta.color}">
+          ${allDone ? '🔄 Review All' : mastered === 0 && learning === 0 ? '🌱 Start' : '📖 Continue'}
+        </button>
+      </div>`;
+  }).join('');
+}
+
+function startStudySession(cat) {
+  currentStudyCat = cat;
+  const words = UYGHUR_DATA.vocabulary[cat] || [];
+  const allMastered = words.every((_, i) => getWordProgress(cat, i) === 'mastered');
+
+  let pool = [];
+  if (allMastered) {
+    pool = words.map((w, i) => ({ word: w, cat, idx: i }));
+  } else {
+    const learning = [], fresh = [];
+    words.forEach((w, i) => {
+      const p = getWordProgress(cat, i);
+      if (p === 'learning') learning.push({ word: w, cat, idx: i });
+      else if (p === 'new') fresh.push({ word: w, cat, idx: i });
+    });
+    pool = [...learning, ...fresh].slice(0, 10);
+  }
+
+  studyWords = shuffle(pool);
+  studyIdx = 0; studyFlipped = false;
+  studyKnownCount = 0; studyPracticingCount = 0; studyXPEarned = 0;
+
+  document.getElementById('study-home').classList.add('hidden');
+  document.getElementById('study-complete').classList.add('hidden');
+  document.getElementById('study-session').classList.remove('hidden');
+  showStudyCard();
+}
+
+function showStudyCard() {
+  if (studyIdx >= studyWords.length) { showStudyComplete(); return; }
+  const { word, cat, idx } = studyWords[studyIdx];
+  const meta = STUDY_CATS[cat];
+  const lvl  = UYGHUR_DATA.levels[word.level - 1];
+  studyFlipped = false;
+
+  document.getElementById('study-card-inner').classList.remove('flipped');
+  document.getElementById('study-actions').classList.add('hidden');
+
+  const pct = Math.round((studyIdx / studyWords.length) * 100);
+  document.getElementById('study-progress').style.width = pct + '%';
+  document.getElementById('study-counter').textContent = `${studyIdx + 1} / ${studyWords.length}`;
+  document.getElementById('study-cat-badge').textContent = `${meta.emoji} ${meta.name}`;
+  document.getElementById('study-cat-badge').style.background = meta.color;
+
+  document.getElementById('study-level-pill').textContent = `${lvl.emoji} ${lvl.name}`;
+  document.getElementById('study-level-pill').style.background = lvl.color;
+  document.getElementById('study-word-uyghur').textContent = word.uyghur;
+
+  document.getElementById('study-word-english').textContent = word.english;
+  document.getElementById('study-word-latin').textContent   = word.latin;
+  document.getElementById('study-word-tip').textContent     = '💡 ' + word.tip;
+
+  // Color the card faces
+  document.getElementById('study-front').style.background =
+    `linear-gradient(135deg, ${meta.color}dd, ${meta.color}99)`;
+  document.getElementById('study-back').style.background =
+    `linear-gradient(135deg, ${meta.color}bb, ${meta.color}77)`;
+}
+
+function flipStudyCard() {
+  if (studyFlipped) return;
+  studyFlipped = true;
+  document.getElementById('study-card-inner').classList.add('flipped');
+  setTimeout(() => document.getElementById('study-actions').classList.remove('hidden'), 350);
+  speakStudyWord();
+}
+
+function speakStudyWord() {
+  if (studyIdx >= studyWords.length || !window.speechSynthesis) return;
+  const { word } = studyWords[studyIdx];
+  window.speechSynthesis.cancel();
+  const utt = new SpeechSynthesisUtterance(`${word.latin}. ${word.english}.`);
+  utt.lang = 'en-US'; utt.rate = 0.8;
+  window.speechSynthesis.speak(utt);
+}
+
+function markStudyWord(known) {
+  if (studyIdx >= studyWords.length) return;
+  const { cat, idx } = studyWords[studyIdx];
+  const wasNew = getWordProgress(cat, idx) === 'new';
+
+  if (known) {
+    setWordProgress(cat, idx, 'mastered');
+    if (wasNew || getWordProgress(cat, idx) !== 'mastered') {
+      masteredWords[`${cat}_${idx}`] = true;
+      localStorage.setItem('uyghur_mastered', JSON.stringify(masteredWords));
+    }
+    studyKnownCount++;
+    addXP(5); studyXPEarned += 5;
+    showToast('Know it! +5 XP ✓');
+  } else {
+    setWordProgress(cat, idx, 'learning');
+    studyPracticingCount++;
+    showToast('Noted — will come back 🔄');
+  }
+  studyIdx++;
+  showStudyCard();
+}
+
+function showStudyComplete() {
+  document.getElementById('study-session').classList.add('hidden');
+  document.getElementById('study-complete').classList.remove('hidden');
+  const pct = studyWords.length ? Math.round((studyKnownCount / studyWords.length) * 100) : 0;
+  document.getElementById('study-done-emoji').textContent =
+    pct >= 80 ? '🏆' : pct >= 50 ? '🎉' : '💪';
+  document.getElementById('study-done-known').textContent     = studyKnownCount;
+  document.getElementById('study-done-practicing').textContent = studyPracticingCount;
+  document.getElementById('study-done-xp').textContent        = studyXPEarned;
+  updateLevelDisplay();
+}
+
+function repeatStudySession() { if (currentStudyCat) startStudySession(currentStudyCat); }
+
+function backToStudyHome() {
+  document.getElementById('study-session').classList.add('hidden');
+  document.getElementById('study-complete').classList.add('hidden');
+  document.getElementById('study-home').classList.remove('hidden');
+  window.speechSynthesis && window.speechSynthesis.cancel();
+  renderStudyHome();
 }
 
 // ── Alphabet ──
