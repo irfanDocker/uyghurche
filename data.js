@@ -29,7 +29,7 @@ const UYGHUR_DATA = {
     { letter: "ۆ", name: "Ö", latin: "ö", example: "ئۆي", exampleLatin: "öy", exampleEn: "house" },
     { letter: "ۈ", name: "Ü", latin: "ü", example: "ئۈزۈم", exampleLatin: "üzüm", exampleEn: "grape" },
     { letter: "ۋ", name: "We", latin: "w/v", example: "ۋاق", exampleLatin: "waq", exampleEn: "time/moment" },
-    { letter: "ې", name: "É", latin: "é", example: "تېز", exampleLatin: "téz", exampleEn: "fast/quick" },
+    { letter: "ې", name: "É", latin: "é", example: "ئېغىز", exampleLatin: "éghiz", exampleEn: "mouth" },
     { letter: "ى", name: "Ye", latin: "i/y", example: "يىل", exampleLatin: "yil", exampleEn: "year" },
     { letter: "ي", name: "Yi", latin: "y", example: "يول", exampleLatin: "yol", exampleEn: "road/way" },
   ],
