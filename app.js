@@ -125,20 +125,80 @@ function showPage(id) {
 }
 
 // ── Alphabet ──
+const LETTER_COLORS = [
+  '#EF4444','#F97316','#F59E0B','#10B981',
+  '#06B6D4','#3B82F6','#8B5CF6','#EC4899',
+  '#EF4444','#F97316','#F59E0B','#10B981',
+  '#06B6D4','#3B82F6','#8B5CF6','#EC4899',
+  '#EF4444','#F97316','#F59E0B','#10B981',
+  '#06B6D4','#3B82F6','#8B5CF6','#EC4899',
+  '#EF4444','#F97316','#F59E0B','#10B981',
+  '#06B6D4','#3B82F6','#8B5CF6','#EC4899',
+];
+
+let currentLetterIdx = -1;
+
 function renderAlphabet() {
   const grid = document.getElementById('alphabet-grid');
-  grid.innerHTML = UYGHUR_DATA.alphabet.map((l, i) => `
-    <div class="letter-card" onclick="showLetterDetail(${i})">
-      <div class="letter-main">${l.letter}</div>
-      <div class="letter-name">${l.name}</div>
-      <div class="letter-latin">"${l.latin}"</div>
-      <div class="letter-example">${l.example} = ${l.exampleEn}</div>
-    </div>`).join('');
+  grid.innerHTML = UYGHUR_DATA.alphabet.map((l, i) => {
+    const color = LETTER_COLORS[i];
+    return `
+      <div class="letter-card" onclick="showLetterDetail(${i})"
+           style="background:linear-gradient(135deg,${color},${color}cc)">
+        <div class="letter-card-number">${i + 1}</div>
+        <div class="letter-card-emoji">${l.emoji}</div>
+        <div class="letter-main">${l.letter}</div>
+        <div class="letter-name">${l.name}</div>
+        <div class="letter-latin">"${l.latin}"</div>
+      </div>`;
+  }).join('');
 }
 
 function showLetterDetail(idx) {
+  currentLetterIdx = idx;
   const l = UYGHUR_DATA.alphabet[idx];
-  showToast(`${l.letter} · ${l.name} · "${l.latin}" · ${l.example} (${l.exampleLatin}) = ${l.exampleEn}`);
+  const color = LETTER_COLORS[idx];
+
+  document.getElementById('lm-color-bar').style.background = color;
+  document.getElementById('lm-emoji-big').textContent = l.emoji;
+  document.getElementById('lm-letter-big').textContent = l.letter;
+  document.getElementById('lm-letter-big').style.color = color;
+  document.getElementById('lm-name').textContent = l.name;
+  document.getElementById('lm-romanization').textContent = `"${l.latin}"`;
+  document.getElementById('lm-example-uyghur').textContent = l.example;
+  document.getElementById('lm-example-latin').textContent = l.exampleLatin;
+  document.getElementById('lm-example-en').textContent = l.exampleEn;
+  document.getElementById('lm-listen-btn').style.background = color;
+
+  document.getElementById('letter-modal-overlay').classList.remove('hidden');
+  speakCurrentLetter();
+}
+
+function closeLetterModal() {
+  document.getElementById('letter-modal-overlay').classList.add('hidden');
+  window.speechSynthesis && window.speechSynthesis.cancel();
+}
+
+function handleLetterOverlayClick(e) {
+  if (e.target === document.getElementById('letter-modal-overlay')) closeLetterModal();
+}
+
+function navLetter(dir) {
+  const next = (currentLetterIdx + dir + UYGHUR_DATA.alphabet.length) % UYGHUR_DATA.alphabet.length;
+  showLetterDetail(next);
+}
+
+function speakCurrentLetter() {
+  if (currentLetterIdx < 0 || !window.speechSynthesis) return;
+  const l = UYGHUR_DATA.alphabet[currentLetterIdx];
+  window.speechSynthesis.cancel();
+  const utt = new SpeechSynthesisUtterance(
+    `${l.name}. ${l.exampleLatin}. ${l.exampleEn}.`
+  );
+  utt.lang = 'en-US';
+  utt.rate = 0.8;
+  utt.pitch = 1.05;
+  window.speechSynthesis.speak(utt);
 }
 
 // ── Vocabulary Table ──
@@ -437,4 +497,9 @@ document.addEventListener('DOMContentLoaded', () => {
   showPage('home');
   updateLevelDisplay();
   refreshLevelSelects();
+  document.addEventListener('keydown', e => {
+    if (e.key === 'Escape') closeLetterModal();
+    if (e.key === 'ArrowRight' && currentLetterIdx >= 0) navLetter(1);
+    if (e.key === 'ArrowLeft'  && currentLetterIdx >= 0) navLetter(-1);
+  });
 });

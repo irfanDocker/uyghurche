@@ -53,6 +53,28 @@
 <!-- ── Toast ── -->
 <div class="toast" id="toast"></div>
 
+<!-- ── Letter detail modal ── -->
+<div class="letter-modal-overlay hidden" id="letter-modal-overlay" onclick="handleLetterOverlayClick(event)">
+  <div class="letter-modal-box" id="letter-modal-box">
+    <button class="letter-modal-close" onclick="closeLetterModal()">✕</button>
+    <div class="letter-modal-color-bar" id="lm-color-bar"></div>
+    <div class="letter-modal-emoji-big" id="lm-emoji-big"></div>
+    <div class="letter-modal-letter-big" id="lm-letter-big"></div>
+    <div class="letter-modal-name" id="lm-name"></div>
+    <div class="letter-modal-romanization" id="lm-romanization"></div>
+    <div class="letter-modal-example-box">
+      <div class="letter-modal-example-uyghur" id="lm-example-uyghur"></div>
+      <div class="letter-modal-example-latin" id="lm-example-latin"></div>
+      <div class="letter-modal-example-en" id="lm-example-en"></div>
+    </div>
+    <button class="letter-modal-listen-btn" id="lm-listen-btn" onclick="speakCurrentLetter()">🔊 Listen</button>
+    <div class="letter-modal-nav">
+      <button class="letter-modal-arrow" onclick="navLetter(-1)" title="Previous">◀</button>
+      <button class="letter-modal-arrow" onclick="navLetter(1)" title="Next">▶</button>
+    </div>
+  </div>
+</div>
+
 <!-- ════════════════════════════════════════════
      PAGE: HOME
 ════════════════════════════════════════════ -->
