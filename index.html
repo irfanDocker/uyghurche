@@ -1,0 +1,324 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Uyghurche — Learn Uyghur Free</title>
+  <meta name="description" content="Free Uyghur language learning platform for kids and adults worldwide. Learn the alphabet, vocabulary, and useful phrases." />
+  <link rel="stylesheet" href="styles.css" />
+  <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🌙</text></svg>" />
+</head>
+<body>
+
+<!-- ── Navigation ── -->
+<nav>
+  <div class="nav-inner">
+    <div class="nav-logo">
+      <span class="uyghur-logo">ئۇيغۇرچە</span>
+      <span>Uyghurche</span>
+    </div>
+    <div class="nav-links">
+      <button id="nav-home" onclick="showPage('home')">🏠 Home</button>
+      <button id="nav-alphabet" onclick="showPage('alphabet')">🔤 Alphabet</button>
+      <button id="nav-vocab" onclick="showPage('vocab')">📋 Vocabulary</button>
+      <button id="nav-games" onclick="showPage('games')">🎮 Games</button>
+      <button id="nav-phrases" onclick="showPage('phrases')">💬 Phrases</button>
+      <button id="nav-about" onclick="showPage('about')">ℹ️ About</button>
+    </div>
+  </div>
+</nav>
+
+<!-- ── Toast ── -->
+<div class="toast" id="toast"></div>
+
+<!-- ════════════════════════════════════════════
+     PAGE: HOME
+════════════════════════════════════════════ -->
+<div class="page active" id="page-home">
+  <div class="hero">
+    <div class="hero-uyghur">ئۇيغۇر تىلىنى ئۆگىنىڭ!</div>
+    <h1>Learn Uyghur — Free, Forever</h1>
+    <p>Preserving the Uyghur language for future generations.<br>
+       Teach your kids, connect with culture, and share it with the world.</p>
+    <div class="hero-buttons">
+      <button class="btn btn-primary" onclick="showPage('alphabet')">🔤 Start with Alphabet</button>
+      <button class="btn btn-outline" onclick="showPage('games')">🎮 Play & Learn</button>
+    </div>
+  </div>
+
+  <div class="features">
+    <div class="feature-card" onclick="showPage('alphabet')">
+      <div class="icon">🔤</div>
+      <h3>Alphabet</h3>
+      <p>Learn all 32 letters of the Uyghur Arabic script with examples and pronunciation.</p>
+    </div>
+    <div class="feature-card" onclick="showPage('vocab')">
+      <div class="icon">📊</div>
+      <h3>Vocabulary Grid</h3>
+      <p>Excel-style table of words by category — greetings, numbers, family, food, and more.</p>
+    </div>
+    <div class="feature-card" onclick="startFlashcardsHome()">
+      <div class="icon">🃏</div>
+      <h3>Flashcards</h3>
+      <p>Flip through cards to memorize Uyghur words in a fun, interactive way.</p>
+    </div>
+    <div class="feature-card" onclick="startQuizHome()">
+      <div class="icon">🧠</div>
+      <h3>Quiz</h3>
+      <p>Test yourself with a multiple-choice quiz across all vocabulary categories.</p>
+    </div>
+    <div class="feature-card" onclick="startMatchingHome()">
+      <div class="icon">🔗</div>
+      <h3>Matching Game</h3>
+      <p>Match Uyghur words to their English meanings — great for kids!</p>
+    </div>
+    <div class="feature-card" onclick="showPage('phrases')">
+      <div class="icon">💬</div>
+      <h3>Useful Phrases</h3>
+      <p>Everyday sentences to start speaking Uyghur right away.</p>
+    </div>
+  </div>
+
+  <div class="section" style="text-align:center; padding-top:0">
+    <div style="background:white;border-radius:16px;padding:2rem;box-shadow:0 2px 12px rgba(0,0,0,.06);max-width:700px;margin:0 auto">
+      <h2 style="color:#2563EB;margin-bottom:.5rem">Your Progress</h2>
+      <p style="color:#64748B;margin-bottom:1rem">Words you've mastered so far</p>
+      <div style="font-size:3rem;font-weight:800;color:#10B981"><span id="mastery-count">0</span></div>
+      <p style="color:#64748B;font-size:.9rem">words mastered ⭐ (star words in the Vocabulary table)</p>
+    </div>
+  </div>
+</div>
+
+<!-- ════════════════════════════════════════════
+     PAGE: ALPHABET
+════════════════════════════════════════════ -->
+<div class="page" id="page-alphabet">
+  <div class="section">
+    <h1 class="section-title">🔤 Uyghur Alphabet</h1>
+    <p class="section-sub">Uyghur is written right-to-left using the Perso-Arabic script. There are 32 letters. Click a card to see details.</p>
+    <div id="alphabet-grid" class="alphabet-grid"></div>
+  </div>
+</div>
+
+<!-- ════════════════════════════════════════════
+     PAGE: VOCABULARY
+════════════════════════════════════════════ -->
+<div class="page" id="page-vocab">
+  <div class="section">
+    <h1 class="section-title">📊 Vocabulary</h1>
+    <p class="section-sub">Browse words by category. Star ⭐ words you've mastered. Click a row to highlight it.</p>
+
+    <div class="tab-bar" id="vocab-tabs">
+      <button class="tab-btn active" data-cat="greetings" onclick="renderVocabTable('greetings')">👋 Greetings</button>
+      <button class="tab-btn" data-cat="numbers" onclick="renderVocabTable('numbers')">🔢 Numbers</button>
+      <button class="tab-btn" data-cat="family" onclick="renderVocabTable('family')">👨‍👩‍👧 Family</button>
+      <button class="tab-btn" data-cat="colors" onclick="renderVocabTable('colors')">🎨 Colors</button>
+      <button class="tab-btn" data-cat="food" onclick="renderVocabTable('food')">🍎 Food</button>
+      <button class="tab-btn" data-cat="animals" onclick="renderVocabTable('animals')">🐾 Animals</button>
+      <button class="tab-btn" data-cat="body" onclick="renderVocabTable('body')">🫀 Body</button>
+    </div>
+
+    <div class="vocab-table-wrap">
+      <table class="vocab-table">
+        <thead>
+          <tr>
+            <th style="width:40px">#</th>
+            <th class="rtl-col">ئۇيغۇرچە (Uyghur)</th>
+            <th>Latin / Romanization</th>
+            <th>English</th>
+            <th>Pronunciation Tip</th>
+            <th>⭐</th>
+          </tr>
+        </thead>
+        <tbody id="vocab-tbody"></tbody>
+      </table>
+    </div>
+
+    <div style="margin-top:1.25rem;display:flex;gap:1rem;flex-wrap:wrap">
+      <button class="btn btn-primary" onclick="showPage('games');setTimeout(startFlashcards,100)">🃏 Practice with Flashcards</button>
+      <button class="btn btn-outline" style="border-color:#2563EB;color:#2563EB" onclick="showPage('games');setTimeout(startQuiz,100)">🧠 Take a Quiz</button>
+    </div>
+  </div>
+</div>
+
+<!-- ════════════════════════════════════════════
+     PAGE: GAMES
+════════════════════════════════════════════ -->
+<div class="page" id="page-games">
+  <div class="section">
+    <h1 class="section-title">🎮 Learning Games</h1>
+    <p class="section-sub">Pick a game to practice your Uyghur. Progress is saved automatically.</p>
+
+    <!-- Game selection -->
+    <div id="game-select">
+      <div class="games-grid">
+        <div class="game-card">
+          <div class="icon">🃏</div>
+          <h3>Flashcards</h3>
+          <p>Flip through Uyghur vocabulary cards. Tap to reveal the English meaning. Great for memorizing!</p>
+          <div style="margin-bottom:.75rem">
+            <label style="font-size:.85rem;color:#64748B;font-weight:600">Category:</label>
+            <select id="fc-cat-select" style="margin-left:.5rem;padding:.3rem .6rem;border-radius:8px;border:1px solid #CBD5E1">
+              <option value="greetings">Greetings</option>
+              <option value="numbers">Numbers</option>
+              <option value="family">Family</option>
+              <option value="colors">Colors</option>
+              <option value="food">Food</option>
+              <option value="animals">Animals</option>
+              <option value="body">Body</option>
+            </select>
+          </div>
+          <button class="btn btn-primary" onclick="startFlashcards(document.getElementById('fc-cat-select').value)">Start Flashcards</button>
+        </div>
+
+        <div class="game-card">
+          <div class="icon">🧠</div>
+          <h3>Quiz</h3>
+          <p>15 multiple-choice questions drawn from all categories. How many can you get right?</p>
+          <button class="btn btn-primary" onclick="startQuiz()">Start Quiz</button>
+        </div>
+
+        <div class="game-card">
+          <div class="icon">🔗</div>
+          <h3>Matching Game</h3>
+          <p>Match 6 Uyghur words to their English meanings. Perfect for kids and beginners!</p>
+          <button class="btn btn-primary" onclick="startMatching()">Start Matching</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- Flashcard area -->
+    <div id="flashcard-area">
+      <button class="btn btn-outline" style="border-color:#64748B;color:#64748B;margin-bottom:1.25rem" onclick="stopGame()">← Back to Games</button>
+      <p class="fc-counter" id="fc-counter">Loading…</p>
+      <div class="progress-bar"><div class="progress-fill" id="fc-progress" style="width:0%"></div></div>
+
+      <div class="flashcard" onclick="flipCard()">
+        <div class="flashcard-uyghur" id="fc-uyghur"></div>
+        <div class="flashcard-latin" id="fc-latin"></div>
+        <div class="flashcard-answer hidden" id="fc-answer"></div>
+        <div class="flashcard-tip hidden" id="fc-tip"></div>
+        <div class="card-hint" id="fc-hint">Tap card to reveal answer</div>
+      </div>
+
+      <div class="flashcard-controls">
+        <button class="btn btn-outline" style="border-color:#2563EB;color:#2563EB" onclick="fcPrev()">← Prev</button>
+        <button class="btn btn-outline" style="border-color:#8B5CF6;color:#8B5CF6" onclick="fcShuffle()">🔀 Random</button>
+        <button class="btn btn-primary" onclick="fcNext()">Next →</button>
+      </div>
+    </div>
+
+    <!-- Quiz area -->
+    <div id="quiz-area">
+      <button class="btn btn-outline" style="border-color:#64748B;color:#64748B;margin-bottom:1.25rem" onclick="stopGame()">← Back to Games</button>
+      <div class="quiz-score" id="quiz-score"></div>
+      <div class="progress-bar"><div class="progress-fill" id="quiz-progress" style="width:0%"></div></div>
+      <div class="quiz-question">
+        <div class="quiz-word" id="quiz-word"></div>
+        <div class="quiz-latin" id="quiz-latin"></div>
+      </div>
+      <div class="quiz-options" id="quiz-options"></div>
+    </div>
+
+    <!-- Match area -->
+    <div id="match-area">
+      <button class="btn btn-outline" style="border-color:#64748B;color:#64748B;margin-bottom:1.25rem" onclick="stopGame()">← Back to Games</button>
+      <div class="match-score" id="match-score"></div>
+      <div class="match-grid">
+        <div class="match-column">
+          <h4>ئۇيغۇرچە · Uyghur</h4>
+          <div id="match-uyghur-col"></div>
+        </div>
+        <div class="match-column">
+          <h4>English</h4>
+          <div id="match-english-col"></div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ════════════════════════════════════════════
+     PAGE: PHRASES
+════════════════════════════════════════════ -->
+<div class="page" id="page-phrases">
+  <div class="section">
+    <h1 class="section-title">💬 Useful Phrases</h1>
+    <p class="section-sub">Everyday sentences to start speaking Uyghur right now.</p>
+    <div class="phrases-list" id="phrases-list"></div>
+  </div>
+</div>
+
+<!-- ════════════════════════════════════════════
+     PAGE: ABOUT
+════════════════════════════════════════════ -->
+<div class="page" id="page-about">
+  <div class="section" style="max-width:780px">
+    <h1 class="section-title">ℹ️ About Uyghurche</h1>
+    <p class="section-sub">A free language preservation project for the Uyghur community and the world.</p>
+
+    <div style="display:flex;flex-direction:column;gap:1.5rem">
+      <div style="background:white;border-radius:16px;padding:2rem;box-shadow:0 2px 12px rgba(0,0,0,.06)">
+        <h2 style="font-size:1.3rem;margin-bottom:.75rem;color:#2563EB">🌏 The Uyghur Language</h2>
+        <p style="color:#475569;line-height:1.7">
+          Uyghur (<span style="direction:rtl;display:inline-block;font-size:1.2rem">ئۇيغۇر تىلى</span> · <em>Uyghur tili</em>) is a Turkic language spoken by approximately
+          10–15 million people, primarily in the Xinjiang region of China and diaspora communities worldwide.
+          It is closely related to Uzbek and other Central Asian languages.
+        </p>
+      </div>
+
+      <div style="background:white;border-radius:16px;padding:2rem;box-shadow:0 2px 12px rgba(0,0,0,.06)">
+        <h2 style="font-size:1.3rem;margin-bottom:.75rem;color:#2563EB">✍️ The Script</h2>
+        <p style="color:#475569;line-height:1.7">
+          Modern Uyghur uses a Perso-Arabic script adapted for Uyghur vowels, written <strong>right to left</strong>.
+          It has 32 letters representing 8 vowels and 24 consonants.
+          A Latin-based romanization system (ULY) and a Cyrillic version also exist.
+        </p>
+        <div style="margin-top:1rem;padding:1rem;background:#EFF6FF;border-radius:12px;direction:rtl;font-size:2rem;text-align:right;color:#1E40AF;line-height:1.8">
+          ئا ئە ب پ ت ج چ خ د ر ز ژ س ش غ ف ق ك گ ڭ ل م ن ھ و ۇ ۆ ۈ ۋ ې ى ي
+        </div>
+      </div>
+
+      <div style="background:white;border-radius:16px;padding:2rem;box-shadow:0 2px 12px rgba(0,0,0,.06)">
+        <h2 style="font-size:1.3rem;margin-bottom:.75rem;color:#2563EB">💡 Learning Tips</h2>
+        <ul style="color:#475569;line-height:2;padding-left:1.5rem">
+          <li>Practice the alphabet first — recognizing letters is the foundation</li>
+          <li>Uyghur vowels are rich — pay attention to ö, ü, é, and the distinction between o and u</li>
+          <li>Word order is Subject-Object-Verb (like Japanese/Korean), e.g. "Men alma yédim" = "I apple ate"</li>
+          <li>Many Uyghur words share roots with Turkish and Uzbek</li>
+          <li>Use flashcards daily — even 5 minutes builds strong memory</li>
+          <li>Try speaking out loud — Uyghur has a beautiful, flowing sound</li>
+        </ul>
+      </div>
+
+      <div style="background:white;border-radius:16px;padding:2rem;box-shadow:0 2px 12px rgba(0,0,0,.06)">
+        <h2 style="font-size:1.3rem;margin-bottom:.75rem;color:#2563EB">🤝 Contribute</h2>
+        <p style="color:#475569;line-height:1.7">
+          This project is open source and free forever. If you'd like to add more vocabulary, fix pronunciations,
+          or translate this site into Uyghur, please open a pull request on GitHub.
+          Every contribution helps preserve this beautiful language.
+        </p>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ── Footer ── -->
+<footer>
+  <p>
+    <strong>ئۇيغۇرچە · Uyghurche</strong> — Free Uyghur Language Learning<br />
+    Open source · Free forever · Made with love for the Uyghur community 🌙<br />
+    <a href="https://github.com/Irfandocker/uyghur-learn" id="footer-github-link">View on GitHub</a>
+  </p>
+</footer>
+
+<script src="data.js"></script>
+<script src="app.js"></script>
+<script>
+  // Home page shortcuts that navigate then start game
+  function startFlashcardsHome() { showPage('games'); setTimeout(() => startFlashcards('greetings'), 100); }
+  function startQuizHome() { showPage('games'); setTimeout(startQuiz, 100); }
+  function startMatchingHome() { showPage('games'); setTimeout(startMatching, 100); }
+</script>
+</body>
+</html>
