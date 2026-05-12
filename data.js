@@ -25,7 +25,7 @@ const UYGHUR_DATA = {
     { letter: "ن",  name: "Ne",  latin: "n",  ipa: "n",   type: "consonant", howToRead: "n as in nose",                                emoji: "🍞", example: "نان",       exampleLatin: "nan",       exampleEn: "bread" },
     { letter: "ھ",  name: "He",  latin: "h",  ipa: "h",   type: "consonant", howToRead: "h as in hat",                                 emoji: "🛒", example: "ھارۋا",     exampleLatin: "harwa",     exampleEn: "cart/wagon" },
     { letter: "ئو", name: "O",   latin: "o",  ipa: "o",   type: "vowel",     howToRead: "o as in more (rounded)",                      emoji: "🌾", example: "ئورغاق",    exampleLatin: "orghaq",    exampleEn: "sickle" },
-    { letter: "ئۇ", name: "U",   latin: "u",  ipa: "u",   type: "vowel",     howToRead: "u as in rule / moon",                         emoji: "🍇", example: "ئۇيا",      exampleLatin: "uya",       exampleEn: "nest" },
+    { letter: "ئۇ", name: "U",   latin: "u",  ipa: "u",   type: "vowel",     howToRead: "u as in rule / moon",                         emoji: "🪺", example: "ئۇيا",      exampleLatin: "uya",       exampleEn: "nest" },
     { letter: "ئۆ", name: "Ö",   latin: "ö",  ipa: "ø",   type: "vowel",     howToRead: "rounded e sound, like German / French ö",     emoji: "👢", example: "ئۆتۈك",     exampleLatin: "ötük",      exampleEn: "boots" },
     { letter: "ئۈ", name: "Ü",   latin: "ü",  ipa: "y",   type: "vowel",     howToRead: "rounded ee sound, like German ü",             emoji: "🍇", example: "ئۈزۈم",     exampleLatin: "üzüm",      exampleEn: "grape" },
     { letter: "ۋ",  name: "We",  latin: "w",  ipa: "w/v", type: "consonant", howToRead: "w as in water (sometimes close to v)",        emoji: "🚲", example: "ۋېلىسىپىت", exampleLatin: "wélisipit", exampleEn: "bicycle" },
