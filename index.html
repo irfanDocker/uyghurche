@@ -86,7 +86,7 @@
 ════════════════════════════════════════════ -->
 <div class="page active" id="page-home">
   <div class="hero">
-    <div class="hero-uyghur">ئۇيغۇر تىلىنى ئۆگىنىڭ!</div>
+    <div class="hero-uyghur">ئۇيغۇرچە ئۆگىنەيلى!</div>
     <h1>Learn Uyghur — Free, Forever</h1>
     <p>Preserving the Uyghur language for future generations.<br>
        Teach your kids, connect with culture, and share it with the world.</p>
@@ -223,29 +223,30 @@
 
     <!-- Game selection -->
     <div id="game-select">
-      <div class="games-grid">
-        <!-- Level progress on games page -->
-        <div style="background:white;border-radius:16px;padding:1.5rem;box-shadow:0 2px 12px rgba(0,0,0,.06);margin-bottom:1.5rem">
-          <h3 style="margin-bottom:1rem;color:#2563EB">Your Level Progress</h3>
-          <div class="level-cards-grid" id="level-cards"></div>
-          <div class="level-up-info">
-            <div class="level-up-info-row">⚡ Earn XP by playing games to unlock higher levels</div>
-            <div class="level-up-xp-list">
-              <span>🃏 Flashcard flip <strong>+2 XP</strong></span>
-              <span>🧠 Quiz correct <strong>+15 XP</strong></span>
-              <span>🔗 Match pair <strong>+10 XP</strong></span>
-              <span>⭐ Star a word <strong>+5 XP</strong></span>
-              <span>🎯 Level Test pass <strong>+50 XP</strong></span>
-            </div>
-          </div>
-          <div style="text-align:center;margin-top:1rem">
-            <button class="btn btn-primary level-test-btn" onclick="startLevelTest()" id="level-test-btn">
-              🎯 Take Level Test
-            </button>
-            <p class="level-test-hint" id="level-test-hint"></p>
+
+      <!-- Level progress — full width above game cards -->
+      <div style="background:white;border-radius:16px;padding:1.5rem;box-shadow:0 2px 12px rgba(0,0,0,.06);margin-bottom:1.5rem">
+        <h3 style="margin-bottom:1rem;color:#2563EB">Your Level Progress</h3>
+        <div class="level-cards-grid" id="level-cards"></div>
+        <div class="level-up-info">
+          <div class="level-up-info-row">⚡ Earn XP by playing games to unlock higher levels</div>
+          <div class="level-up-xp-list">
+            <span>🃏 Flashcard flip <strong>+2 XP</strong></span>
+            <span>🧠 Quiz correct <strong>+15 XP</strong></span>
+            <span>🔗 Match pair <strong>+10 XP</strong></span>
+            <span>⭐ Star a word <strong>+5 XP</strong></span>
+            <span>🎯 Level Test pass <strong>+50 XP</strong></span>
           </div>
         </div>
+        <div style="text-align:center;margin-top:1rem">
+          <button class="btn btn-primary level-test-btn" onclick="startLevelTest()" id="level-test-btn">
+            🎯 Take Level Test
+          </button>
+          <p class="level-test-hint" id="level-test-hint"></p>
+        </div>
+      </div>
 
+      <div class="games-grid">
         <div class="game-card">
           <div class="icon">🃏</div>
           <h3>Flashcards</h3>
