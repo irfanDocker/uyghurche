@@ -252,11 +252,9 @@
           <h3>Flashcards</h3>
           <p>Flip cards to reveal meanings. Earn +1 XP per card. Great for daily practice!</p>
           <div class="game-config-row">
-            <label>Level:</label>
-            <select id="fc-level-select" class="game-level-select"></select>
             <label>Category:</label>
             <select id="fc-cat-select">
-              <option value="all">All categories</option>
+              <option value="all">🌐 All categories</option>
               <option value="greetings">👋 Greetings</option>
               <option value="numbers">🔢 Numbers</option>
               <option value="family">👨‍👩‍👧 Family</option>
@@ -275,8 +273,65 @@
               <option value="emotions">💙 Emotions</option>
               <option value="transport">🚌 Transport</option>
             </select>
+            <label>Words:</label>
+            <select id="fc-count-select">
+              <option value="5">5 words</option>
+              <option value="10" selected>10 words</option>
+              <option value="20">20 words</option>
+              <option value="50">50 words</option>
+              <option value="all">All words</option>
+            </select>
           </div>
           <button class="btn btn-primary" onclick="startFlashcards()">Start Flashcards</button>
+        </div>
+
+        <!-- Random Practice -->
+        <div class="game-card" style="border-color:#8B5CF6">
+          <div class="icon">🎲</div>
+          <h3>Random Practice</h3>
+          <p>Pick a category and how many words you want to learn. New random words every time!</p>
+          <div class="game-config-row">
+            <label>Category:</label>
+            <select id="rp-cat-select">
+              <option value="all">🌐 All categories</option>
+              <option value="greetings">👋 Greetings</option>
+              <option value="greetings2">🤝 Greetings II</option>
+              <option value="numbers">🔢 Numbers</option>
+              <option value="family">👨‍👩‍👧 Family</option>
+              <option value="colors">🎨 Colors</option>
+              <option value="colors2">🌈 Colors II</option>
+              <option value="food">🍎 Food</option>
+              <option value="food2">🥘 Uyghur Food</option>
+              <option value="animals">🐾 Animals</option>
+              <option value="body">🫀 Body</option>
+              <option value="body2">💪 Body II</option>
+              <option value="clothing">👕 Clothing</option>
+              <option value="nature">🌿 Nature</option>
+              <option value="nature2">🏔️ Nature II</option>
+              <option value="school">📚 School</option>
+              <option value="school2">✏️ School II</option>
+              <option value="home">🏠 Home</option>
+              <option value="home2">🪴 Home II</option>
+              <option value="time">⏰ Time &amp; Days</option>
+              <option value="adjectives">✨ Adjectives</option>
+              <option value="verbs">⚡ Verbs</option>
+              <option value="city">🏙️ City</option>
+              <option value="emotions">💙 Emotions</option>
+              <option value="transport">🚌 Transport</option>
+              <option value="sports">⚽ Sports</option>
+              <option value="weather">☀️ Weather</option>
+              <option value="music">🎵 Music</option>
+            </select>
+            <label>How many?</label>
+            <select id="rp-count-select">
+              <option value="5">5 words</option>
+              <option value="10" selected>10 words</option>
+              <option value="20">20 words</option>
+              <option value="50">50 words</option>
+              <option value="100">100 words</option>
+            </select>
+          </div>
+          <button class="btn btn-primary" style="background:#8B5CF6;border-color:#8B5CF6" onclick="startRandomPractice()">🎲 Start Random</button>
         </div>
 
         <div class="game-card">

@@ -169,6 +169,16 @@ const STUDY_CATS = {
   city:       { name: 'City',        emoji: '🏙️',  color: '#475569' },
   emotions:   { name: 'Emotions',    emoji: '💙',  color: '#DB2777' },
   transport:  { name: 'Transport',   emoji: '🚌',  color: '#059669' },
+  sports:     { name: 'Sports',      emoji: '⚽',  color: '#16A34A' },
+  weather:    { name: 'Weather',     emoji: '☀️',  color: '#0EA5E9' },
+  music:      { name: 'Music',       emoji: '🎵',  color: '#A855F7' },
+  food2:      { name: 'Uyghur Food', emoji: '🥘',  color: '#B45309' },
+  body2:      { name: 'Body II',     emoji: '💪',  color: '#D97706' },
+  greetings2: { name: 'Greetings II',emoji: '🤝',  color: '#0D9488' },
+  school2:    { name: 'School II',   emoji: '✏️',  color: '#4F46E5' },
+  nature2:    { name: 'Nature II',   emoji: '🏔️',  color: '#15803D' },
+  home2:      { name: 'Home II',     emoji: '🪴',  color: '#92400E' },
+  colors2:    { name: 'Colors II',   emoji: '🌈',  color: '#BE185D' },
 };
 
 let vocabProgress = JSON.parse(localStorage.getItem('uyghur_vocab_progress') || '{}');
@@ -520,16 +530,38 @@ function refreshLevelSelects() {
 }
 
 // ── Flashcard Game ──
+function startRandomPractice() {
+  const cat   = document.getElementById('rp-cat-select')?.value || 'all';
+  const count = parseInt(document.getElementById('rp-count-select')?.value) || 10;
+  const allWords = Object.entries(UYGHUR_DATA.vocabulary).flatMap(([c, ws]) => ws.map(w => ({ ...w, cat: c })));
+  const pool  = cat === 'all'
+    ? allWords
+    : allWords.filter(w => w.cat === cat);
+  if (pool.length === 0) { showToast('No words in this category yet!'); return; }
+  fcWords         = shuffle([...pool]).slice(0, count);
+  fcCategory      = cat;
+  fcSelectedLevel = 0;
+  fcIndex         = 0;
+  fcShowAnswer    = false;
+  document.getElementById('game-select').classList.add('hidden');
+  document.getElementById('flashcard-area').style.display = 'block';
+  renderFlashcard();
+}
+
 function startFlashcards(catOrLevel) {
   const levelSel = document.getElementById('fc-level-select');
   fcSelectedLevel = levelSel ? parseInt(levelSel.value) : 1;
   fcCategory = document.getElementById('fc-cat-select')?.value || 'all';
+  const countVal = document.getElementById('fc-count-select')?.value || 'all';
 
+  let pool;
   if (fcCategory === 'all') {
-    fcWords = shuffle(getWordsForLevel(fcSelectedLevel));
+    pool = shuffle(getWordsForLevel(fcSelectedLevel));
   } else {
-    fcWords = shuffle(getCategoryWordsForLevel(fcCategory, fcSelectedLevel));
+    pool = shuffle(getCategoryWordsForLevel(fcCategory, fcSelectedLevel));
   }
+
+  fcWords = countVal === 'all' ? pool : pool.slice(0, parseInt(countVal));
 
   if (fcWords.length === 0) {
     showToast('No words for this level yet — try a higher level!');
