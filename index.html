@@ -231,11 +231,11 @@
         <div class="level-up-info">
           <div class="level-up-info-row">⚡ Earn XP by playing games to unlock higher levels</div>
           <div class="level-up-xp-list">
-            <span>🃏 Flashcard flip <strong>+2 XP</strong></span>
-            <span>🧠 Quiz correct <strong>+15 XP</strong></span>
-            <span>🔗 Match pair <strong>+10 XP</strong></span>
-            <span>⭐ Star a word <strong>+5 XP</strong></span>
-            <span>🎯 Level Test pass <strong>+50 XP</strong></span>
+            <span>🃏 Flashcard flip <strong>+1 XP</strong></span>
+            <span>🧠 Quiz correct <strong>+1 XP</strong></span>
+            <span>🔗 Match pair <strong>+1 XP</strong></span>
+            <span>⭐ Star a word <strong>+1 XP</strong></span>
+            <span>🎯 Level Test pass <strong>+1 XP</strong></span>
           </div>
         </div>
         <div style="text-align:center;margin-top:1rem">
@@ -250,7 +250,7 @@
         <div class="game-card">
           <div class="icon">🃏</div>
           <h3>Flashcards</h3>
-          <p>Flip cards to reveal meanings. Earn +2 XP per card. Great for daily practice!</p>
+          <p>Flip cards to reveal meanings. Earn +1 XP per card. Great for daily practice!</p>
           <div class="game-config-row">
             <label>Level:</label>
             <select id="fc-level-select" class="game-level-select"></select>
@@ -282,7 +282,7 @@
         <div class="game-card">
           <div class="icon">🧠</div>
           <h3>Quiz</h3>
-          <p>15 multiple-choice questions for your level. Earn +15 XP per correct answer!</p>
+          <p>15 multiple-choice questions for your level. Earn +1 XP per correct answer!</p>
           <div class="game-config-row">
             <label>Level:</label>
             <select id="quiz-level-select" class="game-level-select"></select>
@@ -293,7 +293,7 @@
         <div class="game-card">
           <div class="icon">🔗</div>
           <h3>Matching Game</h3>
-          <p>Match Uyghur words to English meanings. Earn +10 XP per pair. Great for kids!</p>
+          <p>Match Uyghur words to English meanings. Earn +1 XP per pair. Great for kids!</p>
           <div class="game-config-row">
             <label>Level:</label>
             <select id="match-level-select" class="game-level-select"></select>
@@ -444,7 +444,7 @@
     <div id="study-home">
       <div class="study-cats-grid" id="study-cats-grid"></div>
       <p style="text-align:center;color:#64748B;font-size:.85rem;margin-top:1.5rem">
-        ✓ "Know it!" earns +5 XP and stars the word · Words marked "Still Learning" come back next session
+        ✓ "Know it!" earns +1 XP and stars the word · Words marked "Still Learning" come back next session
       </p>
     </div>
 
@@ -477,7 +477,7 @@
 
       <div class="study-actions hidden" id="study-actions">
         <button class="study-btn-learning" onclick="markStudyWord(false)">🔄 Still Learning</button>
-        <button class="study-btn-known"    onclick="markStudyWord(true)">✓ Know it! +5 XP</button>
+        <button class="study-btn-known"    onclick="markStudyWord(true)">✓ Know it! +1 XP</button>
       </div>
       <p class="study-speak-row">
         <button class="study-speak-btn" onclick="speakStudyWord()">🔊 Listen</button>

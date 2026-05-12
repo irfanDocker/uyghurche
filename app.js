@@ -305,7 +305,7 @@ function markStudyWord(known) {
     masteredWords[`${cat}_${idx}`] = true;
     localStorage.setItem('uyghur_mastered', JSON.stringify(masteredWords));
     studyKnownCount++;
-    addXP(5); studyXPEarned += 5;
+    addXP(1); studyXPEarned += 1;
     showToast('Know it! ✓');
     checkLevelUp(beforeLevel);
   } else {
@@ -486,7 +486,7 @@ function toggleMastered(e, key, btn) {
   localStorage.setItem('uyghur_mastered', JSON.stringify(masteredWords));
   btn.textContent = masteredWords[key] ? '⭐' : '☆';
   btn.closest('tr').classList.toggle('mastered', masteredWords[key]);
-  if (masteredWords[key]) { addXP(5); checkLevelUp(beforeLevel); }
+  if (masteredWords[key]) { addXP(1); checkLevelUp(beforeLevel); }
   updateMasteryBadge();
   showToast(masteredWords[key] ? 'Mastered! ⭐' : 'Unmarked');
 }
@@ -569,8 +569,8 @@ function flipCard() {
     document.getElementById('fc-tip').classList.remove('hidden');
     document.getElementById('fc-hint').textContent = '✅ Got it? Press Next  ·  ❌ Press Shuffle';
     fcShowAnswer = true;
-    addXP(2);
-    showToast('+2 XP');
+    addXP(1);
+    showToast('+1 XP');
   }
 }
 
@@ -674,8 +674,8 @@ function checkAnswer(btn, chosen, correct) {
   if (chosen === correct) {
     btn.classList.add('correct');
     quizScore++;
-    addXP(15);
-    showToast('Correct! +15 XP ✅');
+    addXP(1);
+    showToast('Correct! +1 XP ✅');
   } else {
     btn.classList.add('wrong');
     showToast('Not quite — answer: ' + correct);
@@ -693,7 +693,7 @@ function showQuizResult() {
     const lvl  = getCurrentLevelData();
     const next = getNextLevelData();
     if (passed) {
-      addXP(50);
+      addXP(1);
       emoji    = '🏆';
       headline = 'Level Test Passed!';
       extra    = `<p style="color:#10B981;font-weight:700;font-size:1.1rem;margin-bottom:.5rem">🎉 Great work!</p>
@@ -763,7 +763,7 @@ function selectMatchTile(tile) {
     a.classList.remove('selected'); a.classList.add('matched'); b.classList.add('matched');
     matchedPairs++;
     document.getElementById('match-score').textContent = `Matched: ${matchedPairs} / ${matchWords.length}`;
-    addXP(10); showToast('Match! +10 XP ✅');
+    addXP(1); showToast('Match! +1 XP ✅');
     if (matchedPairs === matchWords.length) {
       setTimeout(() => { showToast('All matched! 🎉 New round…'); setTimeout(startMatching, 1500); }, 400);
     }
