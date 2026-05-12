@@ -86,7 +86,7 @@ nav {
 
 /* ── Page container ── */
 .page { display: none; }
-.page.active { display: block; }
+.page.active { display: block; overflow-x: hidden; }
 
 /* ── Section wrapper ── */
 .section {
@@ -473,13 +473,17 @@ nav {
 /* ── Excel-style vocab grid ── */
 .vocab-table-wrap {
   border-radius: 14px;
-  overflow: hidden;
+  overflow-x: auto;
+  overflow-y: visible;
+  -webkit-overflow-scrolling: touch;
   box-shadow: 0 2px 16px rgba(0,0,0,0.08);
   border: 1px solid var(--border);
+  max-width: 100%;
 }
 
 .vocab-table {
   width: 100%;
+  min-width: 480px;
   border-collapse: collapse;
   background: white;
 }
@@ -998,6 +1002,14 @@ footer a { color: #60A5FA; text-decoration: none; }
   .phrase-card { flex-direction: column; gap: 0.5rem; }
   .phrase-uyghur { min-width: unset; font-size: 1.3rem; }
   :root { --uyghur-font-size: 1.3rem; }
+
+  /* Vocabulary table — mobile */
+  .vocab-table { min-width: 340px; }
+  .vocab-table td, .vocab-table th { padding: 0.55rem 0.5rem; font-size: 0.85rem; }
+  .vocab-table td.uyghur-cell { font-size: 1.2rem; }
+  .vocab-table .tip-cell, .vocab-table th:last-of-type { display: none; }
+  .tab-bar { gap: 0.3rem; }
+  .tab-btn { padding: 0.4rem 0.7rem; font-size: 0.8rem; }
 }
 
 .hidden { display: none !important; }
