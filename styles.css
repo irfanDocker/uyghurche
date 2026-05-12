@@ -213,7 +213,7 @@ nav {
 
 .letter-card {
   border-radius: 18px;
-  padding: 1.1rem 0.75rem 0.9rem;
+  padding: 0.75rem 0.6rem 0.8rem;
   text-align: center;
   cursor: pointer;
   transition: transform 0.18s, box-shadow 0.18s;
@@ -222,6 +222,11 @@ nav {
   overflow: hidden;
   box-shadow: 0 4px 14px rgba(0,0,0,0.18);
   user-select: none;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 0.15rem;
 }
 
 .letter-card:hover {
@@ -234,42 +239,41 @@ nav {
 }
 
 .letter-card-emoji {
-  font-size: 2.4rem;
+  font-size: 1.5rem;
   line-height: 1;
-  margin-bottom: 0.3rem;
-  filter: drop-shadow(0 2px 4px rgba(0,0,0,0.2));
+  opacity: 0.85;
 }
 
 .letter-card .letter-main {
-  font-size: 2.6rem;
+  font-size: 3.4rem;
   direction: rtl;
   color: white;
-  line-height: 1.1;
-  margin-bottom: 0.15rem;
-  text-shadow: 0 2px 6px rgba(0,0,0,0.25);
+  line-height: 1;
+  text-shadow: 0 3px 10px rgba(0,0,0,0.3);
   font-weight: 700;
 }
 
 .letter-card .letter-name {
   font-weight: 800;
-  font-size: 0.85rem;
-  color: rgba(255,255,255,0.95);
-  letter-spacing: 0.03em;
+  font-size: 0.9rem;
+  color: rgba(255,255,255,0.98);
+  letter-spacing: 0.04em;
 }
 
 .letter-card .letter-latin {
-  font-size: 0.75rem;
-  color: rgba(255,255,255,0.78);
+  font-size: 0.72rem;
+  color: rgba(255,255,255,0.72);
   font-weight: 600;
+  letter-spacing: 0.05em;
 }
 
 .letter-card-number {
   position: absolute;
-  top: 6px;
-  left: 8px;
-  font-size: 0.65rem;
+  top: 5px;
+  left: 7px;
+  font-size: 0.6rem;
   font-weight: 700;
-  color: rgba(255,255,255,0.55);
+  color: rgba(255,255,255,0.5);
 }
 
 /* ── Letter detail modal ── */
@@ -792,25 +796,26 @@ nav {
 .phrase-card {
   background: white;
   border-radius: 14px;
-  padding: 1.25rem 1.5rem;
+  padding: 1rem 1.25rem;
   box-shadow: 0 2px 8px rgba(0,0,0,0.06);
   display: flex;
-  align-items: center;
-  gap: 1.5rem;
-  flex-wrap: wrap;
+  flex-direction: column;
+  gap: 0.3rem;
+  border-left: 4px solid var(--primary);
 }
 
 .phrase-uyghur {
-  font-size: 1.6rem;
+  font-size: 1.5rem;
   direction: rtl;
+  text-align: right;
   color: var(--primary-dark);
-  font-weight: 600;
-  min-width: 200px;
+  font-weight: 700;
+  line-height: 1.3;
 }
 
-.phrase-info { flex: 1; }
-.phrase-latin { font-style: italic; color: var(--primary); margin-bottom: 0.2rem; }
-.phrase-english { font-weight: 700; color: var(--text); }
+.phrase-info { display: flex; flex-direction: column; gap: 0.1rem; }
+.phrase-latin { font-style: italic; color: var(--primary); font-size: 0.9rem; }
+.phrase-english { font-weight: 700; color: var(--text); font-size: 0.95rem; }
 
 /* ── Badges ── */
 .badge {
@@ -999,8 +1004,7 @@ footer a { color: #60A5FA; text-decoration: none; }
   .hero h1 { font-size: 1.6rem; }
   .quiz-options { grid-template-columns: 1fr; }
   .match-grid { grid-template-columns: 1fr; }
-  .phrase-card { flex-direction: column; gap: 0.5rem; }
-  .phrase-uyghur { min-width: unset; font-size: 1.3rem; }
+  .phrase-uyghur { font-size: 1.25rem; }
   :root { --uyghur-font-size: 1.3rem; }
 
   /* Vocabulary table — mobile */
@@ -1399,11 +1403,12 @@ footer a { color: #60A5FA; text-decoration: none; }
 }
 .phrase-group-body.collapsed { display: none; }
 
-/* keep old phrase-card styles working inside groups */
+/* phrase cards inside groups */
 .phrase-group .phrase-card {
   margin: 0;
   box-shadow: none;
   border: 1px solid var(--border);
+  border-left: 4px solid var(--primary);
 }
 
 /* ── Level number badge in nav ── */
