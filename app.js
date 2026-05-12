@@ -18,63 +18,86 @@ let matchedPairs = 0;
 let matchWords = [];
 let matchLevel = 1;
 
-// ── Level / XP System ──
+// ── XP (secondary, for games) ──
 function getXP() { return parseInt(localStorage.getItem('uyghur_xp') || '0'); }
 function saveXP(v) { localStorage.setItem('uyghur_xp', v); }
+function addXP(amount) { saveXP(getXP() + amount); updateLevelDisplay(); }
+
+// ── Level System (based on mastered word count) ──
+function getMasteredWordCount() {
+  let count = 0;
+  Object.keys(UYGHUR_DATA.vocabulary).forEach(cat => {
+    UYGHUR_DATA.vocabulary[cat].forEach((_, i) => {
+      if (getWordProgress(cat, i) === 'mastered') count++;
+    });
+  });
+  // also count words starred in vocab table
+  Object.values(masteredWords).forEach(v => { if (v) count++; });
+  // deduplicate: studySession mastered also sets masteredWords, so use max
+  return Math.max(count,
+    Object.values(masteredWords).filter(Boolean).length +
+    Object.values(vocabProgress || {}).filter(v => v === 'mastered').length
+  );
+}
+
+function getMasteredCount() {
+  // Single source of truth: vocabProgress 'mastered' + starred words
+  const fromStudy = Object.values(vocabProgress || {}).filter(v => v === 'mastered').length;
+  const fromStars = Object.values(masteredWords).filter(Boolean).length;
+  return Math.max(fromStudy, fromStars);
+}
 
 function getCurrentLevelData() {
-  const xp = getXP();
+  const count = getMasteredCount();
   let lvl = UYGHUR_DATA.levels[0];
   for (const l of UYGHUR_DATA.levels) {
-    if (xp >= l.xpRequired) lvl = l;
+    if (count >= l.wordsNeeded) lvl = l;
   }
   return lvl;
 }
 
 function getNextLevelData() {
-  const xp = getXP();
-  return UYGHUR_DATA.levels.find(l => l.xpRequired > xp) || null;
+  const count = getMasteredCount();
+  return UYGHUR_DATA.levels.find(l => l.wordsNeeded > count) || null;
 }
 
-function addXP(amount) {
-  const before = getCurrentLevelData();
-  const newXP = getXP() + amount;
-  saveXP(newXP);
+function checkLevelUp(beforeLevel) {
   const after = getCurrentLevelData();
-  updateLevelDisplay();
-  if (after.level > before.level) showLevelUp(after);
+  if (after.level > beforeLevel.level) showLevelUp(after);
 }
 
 function showLevelUp(lvl) {
   document.getElementById('lu-emoji').textContent = lvl.emoji;
-  document.getElementById('lu-name').textContent = lvl.name;
+  document.getElementById('lu-name').textContent = `Level ${lvl.level} · ${lvl.name}`;
   document.getElementById('lu-uyghur').textContent = lvl.uyghur;
   document.getElementById('lu-desc').textContent = lvl.desc;
   const overlay = document.getElementById('levelup-overlay');
   overlay.classList.remove('hidden');
-  setTimeout(() => overlay.classList.add('hidden'), 4000);
+  setTimeout(() => overlay.classList.add('hidden'), 4500);
 }
 
 function updateLevelDisplay() {
-  const xp = getXP();
-  const lvl = getCurrentLevelData();
-  const next = getNextLevelData();
+  const count = getMasteredCount();
+  const lvl   = getCurrentLevelData();
+  const next  = getNextLevelData();
 
   document.querySelectorAll('.nav-level-badge').forEach(el => {
-    el.textContent = `${lvl.emoji} ${lvl.name}`;
+    el.textContent = `${lvl.emoji} ${lvl.level} · ${lvl.name}`;
     el.style.background = lvl.color;
   });
-  document.querySelectorAll('.nav-xp').forEach(el => el.textContent = `${xp} XP`);
+  document.querySelectorAll('.nav-xp').forEach(el => el.textContent = `${count} words`);
 
   const pct = next
-    ? Math.round(((xp - lvl.xpRequired) / (next.xpRequired - lvl.xpRequired)) * 100)
+    ? Math.round(((count - lvl.wordsNeeded) / (next.wordsNeeded - lvl.wordsNeeded)) * 100)
     : 100;
   document.querySelectorAll('.xp-bar-fill').forEach(el => {
     el.style.width = pct + '%';
     el.style.background = lvl.color;
   });
   document.querySelectorAll('.xp-bar-label').forEach(el => {
-    el.textContent = next ? `${xp} / ${next.xpRequired} XP to ${next.name}` : `Max level reached! ${xp} XP`;
+    el.textContent = next
+      ? `${count} / ${next.wordsNeeded} words mastered → Level ${next.level} ${next.name}`
+      : `🏆 Max Level! ${count} words mastered`;
   });
 
   updateMasteryBadge();
@@ -82,19 +105,20 @@ function updateLevelDisplay() {
 }
 
 function renderLevelCards() {
-  const xp = getXP();
+  const count = getMasteredCount();
   const container = document.getElementById('level-cards');
   if (!container) return;
   container.innerHTML = UYGHUR_DATA.levels.map(l => {
-    const unlocked = xp >= l.xpRequired;
+    const unlocked  = count >= l.wordsNeeded;
     const isCurrent = getCurrentLevelData().level === l.level;
     return `
       <div class="level-card ${isCurrent ? 'level-card-current' : ''} ${!unlocked ? 'level-card-locked' : ''}"
            style="${isCurrent ? `border-color:${l.color};box-shadow:0 0 0 3px ${l.color}33` : ''}">
+        <div class="level-card-num" style="font-size:.7rem;font-weight:800;color:${unlocked ? l.color : '#94A3B8'};letter-spacing:.05em">LVL ${l.level}</div>
         <div class="level-card-emoji">${unlocked ? l.emoji : '🔒'}</div>
         <div class="level-card-name" style="${isCurrent ? `color:${l.color}` : ''}">${l.name}</div>
         <div class="level-card-uyghur">${l.uyghur}</div>
-        <div class="level-card-xp">${unlocked ? (isCurrent ? 'Current level' : 'Unlocked ✓') : `Unlock at ${l.xpRequired} XP`}</div>
+        <div class="level-card-xp">${unlocked ? (isCurrent ? '▶ Current level' : '✓ Unlocked') : `Master ${l.wordsNeeded} words`}</div>
       </div>`;
   }).join('');
 }
@@ -128,16 +152,23 @@ function showPage(id) {
 
 // ── Vocabulary Builder ──
 const STUDY_CATS = {
-  greetings: { name: 'Greetings',  emoji: '👋', color: '#10B981' },
-  numbers:   { name: 'Numbers',    emoji: '🔢', color: '#3B82F6' },
-  family:    { name: 'Family',     emoji: '👨‍👩‍👧', color: '#F97316' },
-  colors:    { name: 'Colors',     emoji: '🎨', color: '#EC4899' },
-  food:      { name: 'Food',       emoji: '🍎', color: '#EF4444' },
-  animals:   { name: 'Animals',    emoji: '🐾', color: '#8B5CF6' },
-  body:      { name: 'Body',       emoji: '🫀', color: '#F59E0B' },
-  clothing:  { name: 'Clothing',   emoji: '👕', color: '#06B6D4' },
-  nature:    { name: 'Nature',     emoji: '🌿', color: '#22C55E' },
-  school:    { name: 'School',     emoji: '📚', color: '#6366F1' },
+  greetings:  { name: 'Greetings',   emoji: '👋',  color: '#10B981' },
+  numbers:    { name: 'Numbers',     emoji: '🔢',  color: '#3B82F6' },
+  family:     { name: 'Family',      emoji: '👨‍👩‍👧',  color: '#F97316' },
+  colors:     { name: 'Colors',      emoji: '🎨',  color: '#EC4899' },
+  food:       { name: 'Food',        emoji: '🍎',  color: '#EF4444' },
+  animals:    { name: 'Animals',     emoji: '🐾',  color: '#8B5CF6' },
+  body:       { name: 'Body',        emoji: '🫀',  color: '#F59E0B' },
+  clothing:   { name: 'Clothing',    emoji: '👕',  color: '#06B6D4' },
+  nature:     { name: 'Nature',      emoji: '🌿',  color: '#22C55E' },
+  school:     { name: 'School',      emoji: '📚',  color: '#6366F1' },
+  home:       { name: 'Home',        emoji: '🏠',  color: '#A16207' },
+  time:       { name: 'Time & Days', emoji: '⏰',  color: '#0891B2' },
+  adjectives: { name: 'Adjectives',  emoji: '✨',  color: '#7C3AED' },
+  verbs:      { name: 'Verbs',       emoji: '⚡',  color: '#DC2626' },
+  city:       { name: 'City',        emoji: '🏙️',  color: '#475569' },
+  emotions:   { name: 'Emotions',    emoji: '💙',  color: '#DB2777' },
+  transport:  { name: 'Transport',   emoji: '🚌',  color: '#059669' },
 };
 
 let vocabProgress = JSON.parse(localStorage.getItem('uyghur_vocab_progress') || '{}');
@@ -267,17 +298,16 @@ function speakStudyWord() {
 function markStudyWord(known) {
   if (studyIdx >= studyWords.length) return;
   const { cat, idx } = studyWords[studyIdx];
-  const wasNew = getWordProgress(cat, idx) === 'new';
 
   if (known) {
+    const beforeLevel = getCurrentLevelData();
     setWordProgress(cat, idx, 'mastered');
-    if (wasNew || getWordProgress(cat, idx) !== 'mastered') {
-      masteredWords[`${cat}_${idx}`] = true;
-      localStorage.setItem('uyghur_mastered', JSON.stringify(masteredWords));
-    }
+    masteredWords[`${cat}_${idx}`] = true;
+    localStorage.setItem('uyghur_mastered', JSON.stringify(masteredWords));
     studyKnownCount++;
     addXP(5); studyXPEarned += 5;
-    showToast('Know it! +5 XP ✓');
+    showToast('Know it! ✓');
+    checkLevelUp(beforeLevel);
   } else {
     setWordProgress(cat, idx, 'learning');
     studyPracticingCount++;
@@ -349,8 +379,13 @@ function showLetterDetail(idx) {
   document.getElementById('lm-letter-big').textContent = l.letter;
   document.getElementById('lm-letter-big').style.color = color;
   document.getElementById('lm-name').textContent = l.name;
-  document.getElementById('lm-romanization').textContent = `"${l.latin}"`;
-  document.getElementById('lm-how-to-read').textContent = '🔊 Sounds like: ' + l.howToRead;
+  const typeBadge = document.getElementById('lm-type-badge');
+  typeBadge.textContent = l.type === 'vowel' ? '🔵 vowel' : '🟠 consonant';
+  typeBadge.style.background = l.type === 'vowel' ? '#DBEAFE' : '#FEF3C7';
+  typeBadge.style.color = l.type === 'vowel' ? '#1D4ED8' : '#92400E';
+  document.getElementById('lm-romanization').textContent = `Latin: "${l.latin}"`;
+  document.getElementById('lm-ipa').textContent = `IPA: /${l.ipa}/`;
+  document.getElementById('lm-how-to-read').textContent = '🔊 ' + l.howToRead;
   document.getElementById('lm-how-to-read').style.color = color;
   document.getElementById('lm-example-uyghur').textContent = l.example;
   document.getElementById('lm-example-latin').textContent = l.exampleLatin;
@@ -377,8 +412,10 @@ function buildPronunTable() {
     UYGHUR_DATA.alphabet.map((l, i) => `
       <div class="pronun-row" onclick="showLetterDetail(${i})">
         <span class="pronun-arabic">${l.letter}</span>
+        <span class="pronun-name-col" style="direction:rtl">${l.name}</span>
         <span class="pronun-latin-col">${l.latin}</span>
-        <span class="pronun-name-col">${l.name}</span>
+        <span class="pronun-ipa-col">/${l.ipa}/</span>
+        <span class="pronun-type-col" style="color:${l.type==='vowel'?'#1D4ED8':'#92400E'};font-size:.75rem;font-weight:700">${l.type}</span>
         <span class="pronun-how-col">${l.howToRead}</span>
       </div>`).join('');
 }
@@ -444,13 +481,14 @@ function highlightRow(row) {
 
 function toggleMastered(e, key, btn) {
   e.stopPropagation();
+  const beforeLevel = getCurrentLevelData();
   masteredWords[key] = !masteredWords[key];
   localStorage.setItem('uyghur_mastered', JSON.stringify(masteredWords));
   btn.textContent = masteredWords[key] ? '⭐' : '☆';
   btn.closest('tr').classList.toggle('mastered', masteredWords[key]);
-  if (masteredWords[key]) addXP(5);
+  if (masteredWords[key]) { addXP(5); checkLevelUp(beforeLevel); }
   updateMasteryBadge();
-  showToast(masteredWords[key] ? 'Mastered! +5 XP ⭐' : 'Unmarked');
+  showToast(masteredWords[key] ? 'Mastered! ⭐' : 'Unmarked');
 }
 
 function updateMasteryBadge() {
@@ -458,15 +496,20 @@ function updateMasteryBadge() {
   document.querySelectorAll('.mastery-count').forEach(el => el.textContent = total);
 }
 
-// ── Level Selector Helper ──
+// ── Difficulty Selector Helper (for games — uses word tier 1-6) ──
+const DIFFICULTY_TIERS = [
+  { tier: 1, label: 'Tier 1 — Beginner',           emoji: '🌱' },
+  { tier: 2, label: 'Tier 2 — Elementary',          emoji: '📗' },
+  { tier: 3, label: 'Tier 3 — Intermediate',        emoji: '⭐' },
+  { tier: 4, label: 'Tier 4 — Upper-Intermediate',  emoji: '🌟' },
+  { tier: 5, label: 'Tier 5 — Advanced',            emoji: '🏆' },
+  { tier: 6, label: 'Tier 6 — Expert',              emoji: '💎' },
+];
+
 function buildLevelSelect(id, defaultVal) {
-  const xp = getXP();
-  return UYGHUR_DATA.levels.map(l => {
-    const unlocked = xp >= l.xpRequired;
-    return `<option value="${l.level}" ${l.level == defaultVal ? 'selected' : ''} ${!unlocked ? 'disabled' : ''}>
-      ${l.emoji} Level ${l.level} — ${l.name} ${!unlocked ? `(${l.xpRequired} XP)` : ''}
-    </option>`;
-  }).join('');
+  return DIFFICULTY_TIERS.map(t =>
+    `<option value="${t.tier}" ${t.tier == defaultVal ? 'selected' : ''}>${t.emoji} ${t.label}</option>`
+  ).join('');
 }
 
 function refreshLevelSelects() {
@@ -549,11 +592,12 @@ let isLevelTest = false;
 function updateLevelTestHint() {
   const hint = document.getElementById('level-test-hint');
   if (!hint) return;
-  const lvl  = getCurrentLevelData();
-  const next = getNextLevelData();
+  const count = getMasteredCount();
+  const lvl   = getCurrentLevelData();
+  const next  = getNextLevelData();
   hint.textContent = next
-    ? `Test your ${lvl.emoji} ${lvl.name} knowledge — pass 80%+ to earn +50 XP toward ${next.emoji} ${next.name}!`
-    : '🏆 You have reached the highest level!';
+    ? `Level ${lvl.level} ${lvl.emoji} ${lvl.name} · ${count} words mastered · Master ${next.wordsNeeded} words to reach Level ${next.level} ${next.name}`
+    : '🏆 You have reached the highest level — Fluent!';
 }
 
 function startLevelTest() {
@@ -569,7 +613,7 @@ function startLevelTest() {
   area.innerHTML = `
     <button class="btn btn-outline" style="border-color:#64748B;color:#64748B;margin-bottom:1rem" onclick="stopGame()">← Back</button>
     <div style="text-align:center;background:${lvl.color}18;border:2px solid ${lvl.color};border-radius:14px;padding:.75rem;margin-bottom:1rem;font-weight:700;color:${lvl.color}">
-      🎯 Level Test — ${lvl.emoji} ${lvl.name} &nbsp;·&nbsp; Pass 80%+ to earn +50 XP
+      🎯 Level Test — Level ${lvl.level} ${lvl.emoji} ${lvl.name} &nbsp;·&nbsp; Pass 80%+ to level up!
     </div>
     <div class="quiz-score" id="quiz-score"></div>
     <div class="progress-bar"><div class="progress-fill" id="quiz-progress" style="width:0%"></div></div>
@@ -652,11 +696,11 @@ function showQuizResult() {
       addXP(50);
       emoji    = '🏆';
       headline = 'Level Test Passed!';
-      extra    = `<p style="color:#10B981;font-weight:700;font-size:1.1rem;margin-bottom:.5rem">+50 XP bonus earned! 🎉</p>
-                  ${next ? `<p style="color:#64748B">Keep going — you're working toward ${next.emoji} ${next.name}!</p>` : '<p style="color:#8B5CF6">You\'ve reached the highest level! 🌟</p>'}`;
+      extra    = `<p style="color:#10B981;font-weight:700;font-size:1.1rem;margin-bottom:.5rem">🎉 Great work!</p>
+                  ${next ? `<p style="color:#64748B">Keep going — master ${next.wordsNeeded} words total to reach Level ${next.level} ${next.emoji} ${next.name}!</p>` : '<p style="color:#8B5CF6">You\'ve reached the highest level! 🌟</p>'}`;
     } else {
       emoji    = '💪';
-      headline = `${lvl.emoji} ${lvl.name} — Keep Practicing!`;
+      headline = `Level ${lvl.level} ${lvl.emoji} ${lvl.name} — Keep Practicing!`;
       extra    = `<p style="color:#64748B;margin-bottom:.5rem">You need 80% to pass. Practice more and try again!</p>
                   <p style="color:#64748B;font-size:.9rem">Use 📚 Vocabulary Builder and 🃏 Flashcards to study.</p>`;
     }
@@ -732,14 +776,32 @@ function selectMatchTile(tile) {
 
 // ── Phrases ──
 function renderPhrases() {
-  document.getElementById('phrases-list').innerHTML = UYGHUR_DATA.phrases.map(p => `
-    <div class="phrase-card">
-      <div class="phrase-uyghur">${p.uyghur}</div>
-      <div class="phrase-info">
-        <div class="phrase-latin">${p.latin}</div>
-        <div class="phrase-english">${p.english}</div>
+  document.getElementById('phrases-list').innerHTML = UYGHUR_DATA.phraseGroups.map((g, gi) => `
+    <div class="phrase-group">
+      <div class="phrase-group-header" onclick="togglePhraseGroup(${gi})">
+        <span class="phrase-group-emoji">${g.emoji}</span>
+        <span class="phrase-group-name">${g.name}</span>
+        <span class="phrase-group-count">${g.phrases.length} phrases</span>
+        <span class="phrase-group-arrow" id="pg-arrow-${gi}">▼</span>
+      </div>
+      <div class="phrase-group-body" id="pg-body-${gi}">
+        ${g.phrases.map(p => `
+          <div class="phrase-card">
+            <div class="phrase-uyghur">${p.uyghur}</div>
+            <div class="phrase-info">
+              <div class="phrase-latin">${p.latin}</div>
+              <div class="phrase-english">${p.english}</div>
+            </div>
+          </div>`).join('')}
       </div>
     </div>`).join('');
+}
+
+function togglePhraseGroup(idx) {
+  const body  = document.getElementById(`pg-body-${idx}`);
+  const arrow = document.getElementById(`pg-arrow-${idx}`);
+  const collapsed = body.classList.toggle('collapsed');
+  if (arrow) arrow.textContent = collapsed ? '▶' : '▼';
 }
 
 // ── Helpers ──
