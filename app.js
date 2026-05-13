@@ -148,6 +148,7 @@ function showPage(id) {
   if (id === 'phrases')  renderPhrases();
   if (id === 'study')    renderStudyHome();
   if (id === 'games')    updateLevelTestHint();
+  if (typeof closeMobileMenu === 'function') closeMobileMenu();
 }
 
 // ── Vocabulary Builder ──
