@@ -67,8 +67,7 @@ nav {
   height: 42px;
   width: 42px;
   object-fit: contain;
-  filter: brightness(0) invert(1);
-  opacity: 0.9;
+  border-radius: 8px;
 }
 @media (max-width: 600px) {
   .nav-techcircle-logo { height: 32px; width: 32px; }
