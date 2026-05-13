@@ -25,8 +25,11 @@
       <span class="uyghur-logo">ئۇيغۇرچە</span>
       <span>Uyghurche</span>
     </div>
-    <div class="nav-techcircle" title="About TechCircle" onclick="openTechCircleModal()" style="cursor:pointer">
-      <img src="techcircle-logo.jpg" alt="TechCircle" class="nav-techcircle-logo" />
+    <div style="display:flex;align-items:center;gap:0.5rem">
+      <div class="nav-techcircle" title="About TechCircle" onclick="openTechCircleModal()" style="cursor:pointer">
+        <img src="techcircle-logo.jpg" alt="TechCircle" class="nav-techcircle-logo" />
+      </div>
+      <button class="hamburger-btn" onclick="toggleMobileMenu()" aria-label="Menu">☰</button>
     </div>
   </div>
   <div class="nav-links" id="nav-links">
@@ -39,7 +42,6 @@
     <button id="nav-about" onclick="showPage('about')">ℹ️ About</button>
     <span class="nav-level-badge">🌱 Beginner</span>
     <span class="nav-xp">0 XP</span>
-  </div>
   </div>
 </nav>
 
@@ -687,6 +689,21 @@
   function startFlashcardsHome() { showPage('games'); setTimeout(() => startFlashcards('greetings'), 100); }
   function startQuizHome() { showPage('games'); setTimeout(startQuiz, 100); }
   function startMatchingHome() { showPage('games'); setTimeout(startMatching, 100); }
+
+  // Mobile hamburger menu
+  function toggleMobileMenu() {
+    const links = document.getElementById('nav-links');
+    const btn = document.querySelector('.hamburger-btn');
+    const isOpen = links.classList.toggle('open');
+    btn.textContent = isOpen ? '✕' : '☰';
+  }
+  function closeMobileMenu() {
+    const links = document.getElementById('nav-links');
+    const btn = document.querySelector('.hamburger-btn');
+    if (!links || !btn) return;
+    links.classList.remove('open');
+    btn.textContent = '☰';
+  }
 
   // TechCircle modal
   function openTechCircleModal() {
