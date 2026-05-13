@@ -61,6 +61,7 @@ nav {
   border-radius: 10px;
   transition: background 0.2s;
   flex-shrink: 0;
+  margin-left: auto;
 }
 .nav-techcircle:hover { background: rgba(255,255,255,0.12); }
 .nav-techcircle-logo {
@@ -70,6 +71,9 @@ nav {
   border-radius: 8px;
 }
 @media (max-width: 600px) {
+  .nav-inner { flex-wrap: nowrap; justify-content: space-between; align-items: center; }
+  .nav-links { order: 2; flex: 1; overflow-x: auto; flex-wrap: nowrap; padding-bottom: 0.25rem; }
+  .nav-techcircle { order: 3; margin-left: 0.5rem; }
   .nav-techcircle-logo { height: 44px; width: 44px; }
 }
 
