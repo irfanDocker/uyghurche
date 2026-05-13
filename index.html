@@ -36,7 +36,7 @@
       <span class="nav-level-badge">🌱 Beginner</span>
       <span class="nav-xp">0 XP</span>
     </div>
-    <div class="nav-techcircle" title="TechCircle IT Training School">
+    <div class="nav-techcircle" title="About TechCircle" onclick="openTechCircleModal()" style="cursor:pointer">
       <img src="techcircle-logo.jpg" alt="TechCircle" class="nav-techcircle-logo" />
     </div>
   </div>
@@ -619,6 +619,66 @@
   </p>
 </footer>
 
+<!-- TechCircle Modal -->
+<div id="techcircle-modal-overlay" onclick="closeTechCircleModal()" style="display:none;position:fixed;inset:0;background:rgba(0,0,0,0.6);z-index:999;align-items:center;justify-content:center;padding:1rem">
+  <div onclick="event.stopPropagation()" style="background:white;border-radius:20px;max-width:560px;width:100%;box-shadow:0 20px 60px rgba(0,0,0,0.3);overflow:hidden">
+    <!-- Header -->
+    <div style="background:#0F1535;padding:2rem;text-align:center;position:relative">
+      <img src="techcircle-logo.jpg" alt="TechCircle" style="height:100px;width:100px;object-fit:contain;border-radius:12px;margin-bottom:.75rem" />
+      <button onclick="closeTechCircleModal()" style="position:absolute;top:1rem;right:1rem;background:rgba(255,255,255,0.15);border:none;color:white;font-size:1.2rem;width:32px;height:32px;border-radius:50%;cursor:pointer;line-height:1">✕</button>
+    </div>
+    <!-- Body -->
+    <div style="padding:2rem;display:flex;flex-direction:column;gap:1.25rem">
+
+      <div style="background:#FFF7ED;border-left:4px solid #F97316;border-radius:8px;padding:1rem 1.25rem">
+        <div style="font-weight:800;color:#C2410C;font-size:.85rem;letter-spacing:.05em;margin-bottom:.25rem">📢 CURRENT STATUS</div>
+        <p style="color:#7C2D12;line-height:1.6;font-size:.95rem">
+          We are currently <strong>not accepting new students</strong> due to high demand in app development.
+          We will publish more apps in the future — stay tuned!
+        </p>
+      </div>
+
+      <div>
+        <h3 style="font-size:1rem;font-weight:800;color:#2563EB;margin-bottom:.6rem">🏫 Our Story</h3>
+        <p style="color:#475569;line-height:1.7;font-size:.9rem">
+          TechCircle, LLC was founded by <strong>Irfan Yuksel</strong> and <strong>Shafkat Ali</strong> with a mission
+          to empower communities through hands-on IT education. Starting as a small training school,
+          TechCircle grew into a recognized hub for technology learning — teaching programming, networking,
+          cybersecurity, and software development to students from all backgrounds.
+        </p>
+      </div>
+
+      <div>
+        <h3 style="font-size:1rem;font-weight:800;color:#2563EB;margin-bottom:.6rem">💡 Mission</h3>
+        <p style="color:#475569;line-height:1.7;font-size:.9rem">
+          <em>"Be a part of our circle"</em> — we believe technology should be accessible to everyone.
+          TechCircle's current focus has shifted toward building apps that give back to the community,
+          including this free Uyghur language learning platform.
+        </p>
+      </div>
+
+      <div style="display:flex;gap:1rem;flex-wrap:wrap">
+        <div style="flex:1;min-width:120px;background:#EFF6FF;border-radius:12px;padding:1rem;text-align:center">
+          <div style="font-size:1.5rem">👨‍🎓</div>
+          <div style="font-weight:800;color:#1E40AF;font-size:1.1rem">100+</div>
+          <div style="color:#64748B;font-size:.8rem">Students trained</div>
+        </div>
+        <div style="flex:1;min-width:120px;background:#F0FDF4;border-radius:12px;padding:1rem;text-align:center">
+          <div style="font-size:1.5rem">📱</div>
+          <div style="font-weight:800;color:#15803D;font-size:1.1rem">Growing</div>
+          <div style="color:#64748B;font-size:.8rem">Apps in development</div>
+        </div>
+        <div style="flex:1;min-width:120px;background:#FDF4FF;border-radius:12px;padding:1rem;text-align:center">
+          <div style="font-size:1.5rem">🌍</div>
+          <div style="font-weight:800;color:#7E22CE;font-size:1.1rem">Community</div>
+          <div style="color:#64748B;font-size:.8rem">First approach</div>
+        </div>
+      </div>
+
+    </div>
+  </div>
+</div>
+
 <script src="data.js"></script>
 <script src="app.js"></script>
 <script>
@@ -626,6 +686,19 @@
   function startFlashcardsHome() { showPage('games'); setTimeout(() => startFlashcards('greetings'), 100); }
   function startQuizHome() { showPage('games'); setTimeout(startQuiz, 100); }
   function startMatchingHome() { showPage('games'); setTimeout(startMatching, 100); }
+
+  // TechCircle modal
+  function openTechCircleModal() {
+    const el = document.getElementById('techcircle-modal-overlay');
+    el.style.display = 'flex';
+    document.body.style.overflow = 'hidden';
+  }
+  function closeTechCircleModal() {
+    const el = document.getElementById('techcircle-modal-overlay');
+    el.style.display = 'none';
+    document.body.style.overflow = '';
+  }
+  document.addEventListener('keydown', e => { if (e.key === 'Escape') closeTechCircleModal(); });
 </script>
 </body>
 </html>
