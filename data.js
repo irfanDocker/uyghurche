@@ -1,6 +1,6 @@
 const UYGHUR_DATA = {
   alphabet: [
-    { letter: "ئا", name: "A",   latin: "a",  ipa: "ɑ",   type: "vowel",     howToRead: "a as in Apple",                              emoji: "🐴", example: "ئات",        exampleLatin: "at",        exampleEn: "horse" },
+    { letter: "ئا", name: "A",   latin: "a",  ipa: "ɑ",   type: "vowel",     howToRead: "a as in up",                              emoji: "🐴", example: "ئات",        exampleLatin: "at",        exampleEn: "horse" },
     { letter: "ئە", name: "E",   latin: "e",  ipa: "æ/ɛ", type: "vowel",     howToRead: "e as in bed",                         emoji: "👓", example: "ئەينەك",     exampleLatin: "eynek",     exampleEn: "glasses" },
     { letter: "ب",  name: "Be",  latin: "b",  ipa: "b",   type: "consonant", howToRead: "b as in boy",                                 emoji: "🐟", example: "بېلىق",     exampleLatin: "béliq",     exampleEn: "fish" },
     { letter: "پ",  name: "Pe",  latin: "p",  ipa: "p",   type: "consonant", howToRead: "p as in pen",                                 emoji: "🐸", example: "پاقا",      exampleLatin: "paqa",      exampleEn: "frog" },
