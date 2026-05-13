@@ -54,6 +54,26 @@ nav {
   gap: 0.5rem;
 }
 
+.nav-techcircle {
+  display: flex;
+  align-items: center;
+  padding: 0.4rem;
+  border-radius: 10px;
+  transition: background 0.2s;
+  flex-shrink: 0;
+}
+.nav-techcircle:hover { background: rgba(255,255,255,0.12); }
+.nav-techcircle-logo {
+  height: 42px;
+  width: 42px;
+  object-fit: contain;
+  filter: brightness(0) invert(1);
+  opacity: 0.9;
+}
+@media (max-width: 600px) {
+  .nav-techcircle-logo { height: 32px; width: 32px; }
+}
+
 .nav-logo .uyghur-logo {
   font-size: 1.6rem;
   direction: rtl;
