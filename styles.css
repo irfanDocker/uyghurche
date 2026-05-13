@@ -64,13 +64,13 @@ nav {
 }
 .nav-techcircle:hover { background: rgba(255,255,255,0.12); }
 .nav-techcircle-logo {
-  height: 42px;
-  width: 42px;
+  height: 64px;
+  width: 64px;
   object-fit: contain;
   border-radius: 8px;
 }
 @media (max-width: 600px) {
-  .nav-techcircle-logo { height: 32px; width: 32px; }
+  .nav-techcircle-logo { height: 44px; width: 44px; }
 }
 
 .nav-logo .uyghur-logo {
