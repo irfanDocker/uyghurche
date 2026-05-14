@@ -271,6 +271,10 @@ const STUDY_CATS = {
   geography2:     { name: 'Geography',       emoji: '🌍',  color: '#0369A1' },
   birds2:         { name: 'Birds',           emoji: '🦅',  color: '#92400E' },
   insects:        { name: 'Insects',         emoji: '🦋',  color: '#15803D' },
+  animals2:       { name: 'Animals II',      emoji: '🦁',  color: '#B45309' },
+  plants2:        { name: 'Plants',          emoji: '🌿',  color: '#15803D' },
+  professions2:   { name: 'Professions II',  emoji: '👷',  color: '#374151' },
+  tools2:         { name: 'Tools II',        emoji: '🔨',  color: '#92400E' },
 };
 
 let vocabProgress = JSON.parse(localStorage.getItem('uyghur_vocab_progress') || '{}');
