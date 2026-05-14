@@ -292,6 +292,11 @@ const STUDY_CATS = {
   religion2:      { name: 'Religion',        emoji: '🕌',  color: '#374151' },
   space:          { name: 'Space',           emoji: '🚀',  color: '#1E3A5F' },
   environment:    { name: 'Environment',     emoji: '🌱',  color: '#15803D' },
+  law2:           { name: 'Law II',          emoji: '⚖️',  color: '#4B5563' },
+  politics2:      { name: 'Politics II',     emoji: '🗳️',  color: '#1D4ED8' },
+  numbers3:       { name: 'Numbers III',     emoji: '🔢',  color: '#374151' },
+  measurements:   { name: 'Measurements',    emoji: '📏',  color: '#0891B2' },
+  sports4:        { name: 'Sports IV',       emoji: '⚽',  color: '#15803D' },
 };
 
 let vocabProgress = JSON.parse(localStorage.getItem('uyghur_vocab_progress') || '{}');
