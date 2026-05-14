@@ -623,12 +623,12 @@
 </footer>
 
 <!-- TechCircle Modal -->
-<div id="techcircle-modal-overlay" onclick="closeTechCircleModal()" style="display:none;position:fixed;inset:0;background:rgba(0,0,0,0.6);z-index:999;align-items:center;justify-content:center;padding:1rem">
-  <div onclick="event.stopPropagation()" style="background:white;border-radius:20px;max-width:560px;width:100%;box-shadow:0 20px 60px rgba(0,0,0,0.3);overflow:hidden">
+<div id="techcircle-modal-overlay" onclick="closeTechCircleModal()" style="display:none;position:fixed;inset:0;background:rgba(0,0,0,0.6);z-index:999;align-items:flex-start;justify-content:center;padding:1rem;overflow-y:auto">
+  <div onclick="event.stopPropagation()" style="background:white;border-radius:20px;max-width:560px;width:100%;box-shadow:0 20px 60px rgba(0,0,0,0.3);margin:auto;position:relative">
     <!-- Header -->
-    <div style="background:#0F1535;padding:2rem;text-align:center;position:relative">
+    <div style="background:#0F1535;padding:2rem;text-align:center;border-radius:20px 20px 0 0;position:relative">
       <img src="techcircle-logo.jpg" alt="TechCircle" style="height:100px;width:100px;object-fit:contain;border-radius:12px;margin-bottom:.75rem" />
-      <button onclick="closeTechCircleModal()" style="position:absolute;top:1rem;right:1rem;background:rgba(255,255,255,0.15);border:none;color:white;font-size:1.2rem;width:32px;height:32px;border-radius:50%;cursor:pointer;line-height:1">✕</button>
+      <button onclick="closeTechCircleModal()" style="position:absolute;top:1rem;right:1rem;background:rgba(255,255,255,0.15);border:none;color:white;font-size:1.2rem;width:36px;height:36px;border-radius:50%;cursor:pointer;line-height:1;font-weight:bold">✕</button>
     </div>
     <!-- Body -->
     <div style="padding:2rem;display:flex;flex-direction:column;gap:1.25rem">
@@ -677,6 +677,9 @@
           <div style="color:#64748B;font-size:.8rem">First approach</div>
         </div>
       </div>
+
+      <!-- Close button at bottom -->
+      <button onclick="closeTechCircleModal()" style="width:100%;padding:.85rem;background:#2563EB;color:white;border:none;border-radius:12px;font-size:1rem;font-weight:700;cursor:pointer;margin-top:.5rem">✕ Close</button>
 
     </div>
   </div>
