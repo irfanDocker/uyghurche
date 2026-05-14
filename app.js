@@ -285,6 +285,13 @@ const STUDY_CATS = {
   construction:   { name: 'Construction',    emoji: '🏗️',  color: '#374151' },
   education2:     { name: 'Education II',    emoji: '🎓',  color: '#0369A1' },
   clothing2:      { name: 'Clothing II',     emoji: '👘',  color: '#DB2777' },
+  verbs7:         { name: 'Verbs VII',       emoji: '🎯',  color: '#0F766E' },
+  verbs8:         { name: 'Verbs VIII',      emoji: '💪',  color: '#1D4ED8' },
+  food5:          { name: 'Food V',          emoji: '🥘',  color: '#B45309' },
+  food6:          { name: 'Kitchen II',      emoji: '🍲',  color: '#92400E' },
+  religion2:      { name: 'Religion',        emoji: '🕌',  color: '#374151' },
+  space:          { name: 'Space',           emoji: '🚀',  color: '#1E3A5F' },
+  environment:    { name: 'Environment',     emoji: '🌱',  color: '#15803D' },
 };
 
 let vocabProgress = JSON.parse(localStorage.getItem('uyghur_vocab_progress') || '{}');
