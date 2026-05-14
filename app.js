@@ -266,6 +266,11 @@ const STUDY_CATS = {
   adjectives6:    { name: 'Adjectives VI',   emoji: '🌟',  color: '#BE185D' },
   adverbs2:       { name: 'Connectors',      emoji: '🔗',  color: '#374151' },
   personality:    { name: 'Personality',     emoji: '🧠',  color: '#B45309' },
+  family2:        { name: 'Family II',       emoji: '👨‍👩‍👧', color: '#DB2777' },
+  emotions2:      { name: 'Emotions II',     emoji: '💭',  color: '#7C3AED' },
+  geography2:     { name: 'Geography',       emoji: '🌍',  color: '#0369A1' },
+  birds2:         { name: 'Birds',           emoji: '🦅',  color: '#92400E' },
+  insects:        { name: 'Insects',         emoji: '🦋',  color: '#15803D' },
 };
 
 let vocabProgress = JSON.parse(localStorage.getItem('uyghur_vocab_progress') || '{}');
