@@ -280,6 +280,11 @@ const STUDY_CATS = {
   finance:        { name: 'Finance',         emoji: '💰',  color: '#15803D' },
   travel2:        { name: 'Travel II',       emoji: '✈️',  color: '#0891B2' },
   emergency:      { name: 'Emergency',       emoji: '🚨',  color: '#DC2626' },
+  music2:         { name: 'Music',           emoji: '🎵',  color: '#7C3AED' },
+  literature:     { name: 'Literature',      emoji: '📚',  color: '#1D4ED8' },
+  construction:   { name: 'Construction',    emoji: '🏗️',  color: '#374151' },
+  education2:     { name: 'Education II',    emoji: '🎓',  color: '#0369A1' },
+  clothing2:      { name: 'Clothing II',     emoji: '👘',  color: '#DB2777' },
 };
 
 let vocabProgress = JSON.parse(localStorage.getItem('uyghur_vocab_progress') || '{}');
