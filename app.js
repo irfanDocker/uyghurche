@@ -297,6 +297,11 @@ const STUDY_CATS = {
   numbers3:       { name: 'Numbers III',     emoji: '🔢',  color: '#374151' },
   measurements:   { name: 'Measurements',    emoji: '📏',  color: '#0891B2' },
   sports4:        { name: 'Sports IV',       emoji: '⚽',  color: '#15803D' },
+  daily_life:     { name: 'Daily Life',      emoji: '🏠',  color: '#0369A1' },
+  weather3:       { name: 'Weather III',     emoji: '🌦️',  color: '#0891B2' },
+  body2:          { name: 'Body II',         emoji: '💀',  color: '#DC2626' },
+  adjectives7:    { name: 'Colors & More',   emoji: '🎨',  color: '#7C3AED' },
+  relationships:  { name: 'Relationships',   emoji: '🤝',  color: '#DB2777' },
 };
 
 let vocabProgress = JSON.parse(localStorage.getItem('uyghur_vocab_progress') || '{}');
