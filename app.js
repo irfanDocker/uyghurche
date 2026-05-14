@@ -183,6 +183,28 @@ const STUDY_CATS = {
 };
 
 let vocabProgress = JSON.parse(localStorage.getItem('uyghur_vocab_progress') || '{}');
+
+// Maps English color names → CSS color + whether it needs dark text
+const COLOR_BG_MAP = {
+  'red':            { bg: '#EF4444', dark: false },
+  'green':          { bg: '#16A34A', dark: false },
+  'blue':           { bg: '#3B82F6', dark: false },
+  'blue / green':   { bg: '#0D9488', dark: false },
+  'yellow':         { bg: '#EAB308', dark: true  },
+  'white':          { bg: '#F8FAFC', dark: true  },
+  'black':          { bg: '#1E293B', dark: false },
+  'orange':         { bg: '#F97316', dark: false },
+  'purple':         { bg: '#8B5CF6', dark: false },
+  'light blue':     { bg: '#38BDF8', dark: true  },
+  'brown':          { bg: '#92400E', dark: false },
+  'silver':         { bg: '#94A3B8', dark: true  },
+  'silver color':   { bg: '#94A3B8', dark: true  },
+  'gold':           { bg: '#D97706', dark: false },
+  'gold / golden':  { bg: '#D97706', dark: false },
+  'gold color':     { bg: '#D97706', dark: false },
+  'pink color':     { bg: '#EC4899', dark: false },
+};
+
 let studyWords = [];
 let studyIdx = 0;
 let studyFlipped = false;
@@ -282,11 +304,34 @@ function showStudyCard() {
   document.getElementById('study-word-latin').textContent   = word.latin;
   document.getElementById('study-word-tip').textContent     = '💡 ' + word.tip;
 
-  // Color the card faces
-  document.getElementById('study-front').style.background =
-    `linear-gradient(135deg, ${meta.color}dd, ${meta.color}99)`;
-  document.getElementById('study-back').style.background =
-    `linear-gradient(135deg, ${meta.color}bb, ${meta.color}77)`;
+  // Color the card faces — use real color when studying colors category
+  const isColorCat = (cat === 'colors' || cat === 'colors2');
+  const colorEntry = isColorCat && COLOR_BG_MAP[word.english.toLowerCase()];
+
+  const front = document.getElementById('study-front');
+  const back  = document.getElementById('study-back');
+
+  if (colorEntry) {
+    const { bg, dark } = colorEntry;
+    front.style.background = bg;
+    back.style.background  = bg;
+    const solid   = dark ? '#1E293B' : '#ffffff';
+    const muted   = dark ? 'rgba(0,0,0,0.55)'  : 'rgba(255,255,255,0.85)';
+    const faint   = dark ? 'rgba(0,0,0,0.4)'   : 'rgba(255,255,255,0.7)';
+    document.getElementById('study-word-uyghur').style.color  = solid;
+    document.getElementById('study-word-english').style.color = solid;
+    document.getElementById('study-word-latin').style.color   = muted;
+    document.getElementById('study-word-tip').style.color     = faint;
+    document.querySelector('.study-tap-hint').style.color     = muted;
+  } else {
+    front.style.background = `linear-gradient(135deg, ${meta.color}dd, ${meta.color}99)`;
+    back.style.background  = `linear-gradient(135deg, ${meta.color}bb, ${meta.color}77)`;
+    document.getElementById('study-word-uyghur').style.color  = '';
+    document.getElementById('study-word-english').style.color = '';
+    document.getElementById('study-word-latin').style.color   = '';
+    document.getElementById('study-word-tip').style.color     = '';
+    document.querySelector('.study-tap-hint').style.color     = '';
+  }
 }
 
 function flipStudyCard() {
