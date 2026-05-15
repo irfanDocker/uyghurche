@@ -337,6 +337,10 @@ const STUDY_CATS = {
   professions3:   { name: 'Jobs III',        emoji: '👨‍💼',  color: '#0369A1' },
   expressions:    { name: 'Expressions II',  emoji: '🙌',  color: '#15803D' },
   science3:       { name: 'Science II',      emoji: '⚗️',  color: '#7C3AED' },
+  history:        { name: 'History',         emoji: '🏛️',  color: '#92400E' },
+  technology3:    { name: 'Tech & AI',       emoji: '🤖',  color: '#1D4ED8' },
+  idioms:         { name: 'Idioms',          emoji: '🗣️',  color: '#7C3AED' },
+  adjectives11:   { name: 'Frequency',       emoji: '⏱️',  color: '#374151' },
 };
 
 let vocabProgress = JSON.parse(localStorage.getItem('uyghur_vocab_progress') || '{}');
