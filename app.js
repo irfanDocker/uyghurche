@@ -307,6 +307,12 @@ const STUDY_CATS = {
   office2:        { name: 'Office II',       emoji: '🗂️',  color: '#475569' },
   verbs9:         { name: 'Verbs IX',        emoji: '🌀',  color: '#0F766E' },
   home4:          { name: 'Home IV',         emoji: '🏡',  color: '#B45309' },
+  abstract:       { name: 'Abstract',        emoji: '💡',  color: '#374151' },
+  colors3:        { name: 'Colors III',      emoji: '🌈',  color: '#7C3AED' },
+  time3:          { name: 'Time & Seasons',  emoji: '🗓️',  color: '#0891B2' },
+  arts2:          { name: 'Arts II',         emoji: '🎭',  color: '#DB2777' },
+  food7:          { name: 'Food (Tastes)',   emoji: '😋',  color: '#B45309' },
+  phrases2:       { name: 'Key Phrases',     emoji: '💬',  color: '#0369A1' },
 };
 
 let vocabProgress = JSON.parse(localStorage.getItem('uyghur_vocab_progress') || '{}');
