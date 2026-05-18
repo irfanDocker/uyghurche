@@ -355,6 +355,10 @@ const STUDY_CATS = {
   travel3:        { name: 'Travel III',      emoji: '🗺️',  color: '#0891B2' },
   money2:         { name: 'Money',           emoji: '💵',  color: '#15803D' },
   expressions2:   { name: 'Phrases III',     emoji: '🗨️',  color: '#374151' },
+  verbs15:        { name: 'Verbs XV',        emoji: '🔃',  color: '#0F766E' },
+  body4:          { name: 'Body IV',         emoji: '🧬',  color: '#DC2626' },
+  adjectives13:   { name: 'Adjectives XIII', emoji: '🌟',  color: '#7C3AED' },
+  food9:          { name: 'Uyghur Cuisine',  emoji: '🍖',  color: '#B45309' },
 };
 
 let vocabProgress = JSON.parse(localStorage.getItem('uyghur_vocab_progress') || '{}');
