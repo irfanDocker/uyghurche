@@ -373,6 +373,10 @@ const STUDY_CATS = {
   body5:          { name: 'Body V',          emoji: '🫀',  color: '#BE123C' },
   verbs19:        { name: 'Verbs XIX',       emoji: '🌀',  color: '#0E7490' },
   adjectives16:   { name: 'Adjectives XVI',  emoji: '🎯',  color: '#7C2D12' },
+  science4:       { name: 'Science IV',      emoji: '⚗️',  color: '#1E3A5F' },
+  geography4:     { name: 'Geography IV',    emoji: '🌍',  color: '#065F46' },
+  history2:       { name: 'History II',      emoji: '📜',  color: '#78350F' },
+  social3:        { name: 'Social III',      emoji: '🤲',  color: '#1D4ED8' },
 };
 
 let vocabProgress = JSON.parse(localStorage.getItem('uyghur_vocab_progress') || '{}');
