@@ -1674,7 +1674,7 @@ const UYGHUR_DATA = {
     sports2: [
       { uyghur: "فۇتبول",  latin: "Futbol",       english: "Football / Soccer",    tip: "Fut-bol",        level: 1 },
       { uyghur: "باسكىتبول",latin: "Basketbol",   english: "Basketball",           tip: "Bas-ket-bol",    level: 1 },
-      { uyghur: "ۋوللېيبول",latin: "Wolleybol",   english: "Volleyball",           tip: "Wol-ley-bol",    level: 2 },
+      { uyghur: "ۋالىبول",  latin: "Walibul",     english: "Volleyball",           tip: "Wa-li-bul",      level: 2 },
       { uyghur: "تېننىس",  latin: "Tennis",       english: "Tennis",               tip: "Ten-nis",        level: 2 },
       { uyghur: "كۈرەش",  latin: "Küresh",       english: "Wrestling",            tip: "Kü-resh",        level: 2 },
       { uyghur: "بوكىس",   latin: "Bokis",        english: "Boxing",               tip: "Bo-kis",         level: 2 },
@@ -3304,7 +3304,7 @@ const UYGHUR_DATA = {
       { uyghur: "فۇتبول",      latin: "Futbol",      english: "Football / Soccer", tip: "Fut-bol",     level: 1 },
       { uyghur: "باسكېتبول",   latin: "Basketbol",   english: "Basketball",        tip: "Bas-ket-bol", level: 1 },
       { uyghur: "تېنىس",       latin: "Ténis",       english: "Tennis",            tip: "Té-nis",      level: 1 },
-      { uyghur: "ۋوللېيبول",   latin: "Wolléybol",   english: "Volleyball",        tip: "Wol-léy-bol", level: 1 },
+      { uyghur: "ۋالىبول",     latin: "Walibul",     english: "Volleyball",        tip: "Wa-li-bul",   level: 1 },
       { uyghur: "سۇ ئۈزۈش",    latin: "Su üzüsh",    english: "Swimming",          tip: "Su ü-züsh",   level: 1 },
       { uyghur: "يۈگۈرۈش",     latin: "Yügürüsh",    english: "Running",           tip: "Yü-gü-rüsh",  level: 1 },
       { uyghur: "كۈرەش",       latin: "Küresh",      english: "Wrestling",         tip: "Kü-resh",     level: 1 },
