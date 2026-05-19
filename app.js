@@ -547,11 +547,17 @@ function showStudyCard() {
 }
 
 function flipStudyCard() {
-  if (studyFlipped) return;
-  studyFlipped = true;
-  document.getElementById('study-card-inner').classList.add('flipped');
-  setTimeout(() => document.getElementById('study-actions').classList.remove('hidden'), 350);
-  speakStudyWord();
+  studyFlipped = !studyFlipped;
+  document.getElementById('study-card-inner').classList.toggle('flipped', studyFlipped);
+
+  if (studyFlipped) {
+    // First flip to English side — reveal actions and speak
+    const actions = document.getElementById('study-actions');
+    if (actions.classList.contains('hidden')) {
+      setTimeout(() => actions.classList.remove('hidden'), 350);
+    }
+    speakStudyWord();
+  }
 }
 
 function speakStudyWord() {
