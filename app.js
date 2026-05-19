@@ -476,7 +476,7 @@ function startStudySession(cat) {
       if (p === 'learning') learning.push({ word: w, cat, idx: i });
       else if (p === 'new') fresh.push({ word: w, cat, idx: i });
     });
-    pool = [...learning, ...fresh].slice(0, 10);
+    pool = [...learning, ...fresh];
   }
 
   studyWords = shuffle(pool);
