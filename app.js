@@ -732,6 +732,20 @@ async function asrProcess() {
   form.append('language',        ASR_LANG);
   form.append('response_format', 'json');
 
+  // Prompt injection: pass the current word + nearby vocabulary in Uyghur script.
+  // Whisper uses this as a prior — it strongly biases transcription toward these tokens
+  // and ensures Arabic-script Uyghur output (not Latin or Chinese transliteration).
+  if (studyIdx < studyWords.length) {
+    const currentWord = studyWords[studyIdx].word;
+    // Build a short context string: current word + up to 4 neighbours from the same session
+    const neighbours = studyWords
+      .slice(Math.max(0, studyIdx - 2), studyIdx + 3)
+      .map(s => s.word.uyghur)
+      .join('، ');
+    const prompt = `ئۇيغۇرچە: ${neighbours}. ${currentWord.uyghur}`;
+    form.append('prompt', prompt);
+  }
+
   let transcribed = '';
   try {
     const resp = await fetch(ASR_GROQ_URL, {
