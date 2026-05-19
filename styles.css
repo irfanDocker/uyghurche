@@ -1442,6 +1442,28 @@ footer a { color: #60A5FA; text-decoration: none; }
 }
 .study-asr-feedback:empty { min-height: 0; }
 
+/* Groq key setup form inside the feedback strip */
+.asr-key-form { padding: .6rem .25rem; }
+.asr-key-title { margin: 0 0 .5rem; font-size: .85rem; color: var(--text); }
+.asr-key-row   { display: flex; gap: .4rem; justify-content: center; margin-bottom: .45rem; }
+.asr-key-input {
+  flex: 1; max-width: 280px;
+  border: 1.5px solid var(--border); border-radius: 8px;
+  padding: .35rem .6rem; font-size: .85rem;
+  background: white; color: var(--text);
+  outline: none; font-family: monospace;
+}
+.asr-key-input:focus { border-color: #6366F1; }
+.asr-key-save {
+  background: #6366F1; color: white;
+  border: none; border-radius: 8px;
+  padding: .35rem .9rem; font-size: .85rem;
+  cursor: pointer; font-weight: 600;
+}
+.asr-key-save:hover { background: #4F46E5; }
+.asr-key-link { font-size: .78rem; color: #6366F1; text-decoration: none; }
+.asr-key-link:hover { text-decoration: underline; }
+
 /* Session complete */
 .study-complete-box {
   background: white;

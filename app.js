@@ -608,22 +608,20 @@ function backToStudyHome() {
   renderStudyHome();
 }
 
-// ── ASR — Pronunciation Practice (Transformers.js / Whisper) ──
-let _asrPipeline    = null;
-let _asrLoadState   = 'idle';   // 'idle' | 'loading' | 'ready' | 'error'
-let _asrRecorder    = null;
-let _asrChunks      = [];
-let _asrRecording   = false;
-let _asrAudioCtx    = null;
-let _pendingAudio   = null;     // Float32Array waiting while model loads
+// ── ASR — Pronunciation Practice (Groq API / whisper-large-v3-turbo) ──
+const ASR_GROQ_URL    = 'https://api.groq.com/openai/v1/audio/transcriptions';
+const ASR_GROQ_MODEL  = 'whisper-large-v3-turbo';
+const ASR_LANG        = 'ug';    // Uyghur
+const ASR_MAX_SEC     = 4;       // auto-stop after 4 s
+const ASR_KEY_STORE   = 'uyghur_groq_key';
 
-const ASR_MODEL   = 'onnx-community/whisper-tiny';
-const ASR_DTYPE   = 'q4';       // ~40 MB download, cached in IndexedDB after first use
-const ASR_LANG    = 'ug';       // Uyghur
-const ASR_MAX_SEC = 4;          // auto-stop recording after 4 s
+let _asrRecorder  = null;
+let _asrChunks    = [];
+let _asrRecording = false;
 
-function asrMicBtn()      { return document.getElementById('study-mic-btn'); }
-function asrFeedback()    { return document.getElementById('study-asr-feedback'); }
+/* ── helpers ── */
+function asrMicBtn()   { return document.getElementById('study-mic-btn'); }
+function asrFeedback() { return document.getElementById('study-asr-feedback'); }
 
 function asrSetFeedback(html, bg) {
   const el = asrFeedback();
@@ -632,60 +630,57 @@ function asrSetFeedback(html, bg) {
   el.style.background = bg || '';
 }
 
-function asrSetMic(label, loading, recording) {
+function asrSetMic(label, disabled, recording) {
   const btn = asrMicBtn();
   if (!btn) return;
   btn.textContent = label;
-  btn.disabled    = !!loading;
+  btn.disabled = !!disabled;
   btn.classList.toggle('recording', !!recording);
 }
 
-/* Load the whisper pipeline lazily — called once, then returns cached */
-async function asrGetPipeline() {
-  if (_asrPipeline)             return _asrPipeline;
-  if (_asrLoadState === 'error') return null;
-  if (_asrLoadState === 'loading') {
-    // wait up to 120 s for the ongoing load
-    for (let i = 0; i < 240; i++) {
-      await new Promise(r => setTimeout(r, 500));
-      if (_asrPipeline)              return _asrPipeline;
-      if (_asrLoadState === 'error') return null;
-    }
-    return null;
-  }
+function asrGetKey()       { return localStorage.getItem(ASR_KEY_STORE) || ''; }
+function asrSaveKey(k)     { localStorage.setItem(ASR_KEY_STORE, k.trim()); }
+function asrClearKey()     { localStorage.removeItem(ASR_KEY_STORE); }
 
-  _asrLoadState = 'loading';
-  asrSetFeedback('⏳ Downloading speech model (~40 MB, one-time) …', '#FEF3C7');
-
-  try {
-    const { pipeline, env } = await import(
-      'https://cdn.jsdelivr.net/npm/@huggingface/transformers@3/dist/transformers.min.js'
-    );
-    env.useBrowserCache = true;           // cache model weights in IndexedDB
-
-    _asrPipeline = await pipeline(
-      'automatic-speech-recognition',
-      ASR_MODEL,
-      { dtype: ASR_DTYPE }
-    );
-    _asrLoadState = 'ready';
-    asrSetFeedback('');
-    return _asrPipeline;
-  } catch (err) {
-    console.error('[ASR] load error:', err);
-    _asrLoadState = 'error';
-    asrSetFeedback('❌ Could not load speech model. Check your internet connection.', '#FEE2E2');
-    asrSetMic('🎤 Speak', false, false);
-    return null;
-  }
+/* ── Key-setup inline form ── */
+function asrShowKeyPrompt() {
+  asrSetFeedback(`
+    <div class="asr-key-form">
+      <p class="asr-key-title">🔑 Enter your free <strong>Groq API key</strong> to enable pronunciation checking</p>
+      <div class="asr-key-row">
+        <input id="asr-key-input" type="password" placeholder="gsk_…" autocomplete="off"
+               class="asr-key-input" onkeydown="if(event.key==='Enter')asrSubmitKey()"/>
+        <button class="asr-key-save" onclick="asrSubmitKey()">Save</button>
+      </div>
+      <a href="https://console.groq.com/keys" target="_blank" class="asr-key-link">
+        Get a free key at console.groq.com →
+      </a>
+    </div>`, '#F8FAFC');
+  setTimeout(() => { const i = document.getElementById('asr-key-input'); if (i) i.focus(); }, 50);
 }
 
-/* Entry point — called by the Speak button */
+function asrSubmitKey() {
+  const inp = document.getElementById('asr-key-input');
+  if (!inp) return;
+  const val = inp.value.trim();
+  if (!val.startsWith('gsk_') || val.length < 20) {
+    inp.style.borderColor = '#EF4444';
+    inp.placeholder = 'Key must start with gsk_…';
+    return;
+  }
+  asrSaveKey(val);
+  asrSetFeedback('✅ Key saved! Click <strong>🎤 Speak</strong> to try it.', '#D1FAE5');
+}
+
+/* ── Entry point ── */
 async function toggleASRRecording() {
   if (_asrRecording) { asrStopRecording(); return; }
 
-  // Check browser support
-  if (!navigator.mediaDevices || !navigator.mediaDevices.getUserMedia) {
+  // Ensure we have a Groq key
+  if (!asrGetKey()) { asrShowKeyPrompt(); return; }
+
+  // Check browser mic support
+  if (!navigator.mediaDevices?.getUserMedia) {
     asrSetFeedback('❌ Your browser does not support microphone access.', '#FEE2E2');
     return;
   }
@@ -694,26 +689,20 @@ async function toggleASRRecording() {
   try {
     stream = await navigator.mediaDevices.getUserMedia({ audio: true });
   } catch {
-    asrSetFeedback('❌ Microphone access was denied. Please allow it in your browser settings.', '#FEE2E2');
+    asrSetFeedback('❌ Microphone access was denied — allow it in your browser settings.', '#FEE2E2');
     return;
   }
 
-  // Kick off model pre-load in the background while we record
-  if (_asrLoadState === 'idle') asrGetPipeline();
-
-  _asrChunks   = [];
+  _asrChunks    = [];
   _asrRecording = true;
   asrSetMic('⏹ Stop', false, true);
   asrSetFeedback('🔴 Recording… say the word clearly', '');
 
-  const mimeType = MediaRecorder.isTypeSupported('audio/webm;codecs=opus')
+  const mime = MediaRecorder.isTypeSupported('audio/webm;codecs=opus')
     ? 'audio/webm;codecs=opus' : 'audio/webm';
-  _asrRecorder = new MediaRecorder(stream, { mimeType });
+  _asrRecorder = new MediaRecorder(stream, { mimeType: mime });
   _asrRecorder.ondataavailable = e => { if (e.data.size) _asrChunks.push(e.data); };
-  _asrRecorder.onstop = () => {
-    stream.getTracks().forEach(t => t.stop());
-    asrProcessAudio();
-  };
+  _asrRecorder.onstop = () => { stream.getTracks().forEach(t => t.stop()); asrProcess(); };
   _asrRecorder.start(100);
 
   setTimeout(() => { if (_asrRecording) asrStopRecording(); }, ASR_MAX_SEC * 1000);
@@ -723,93 +712,84 @@ function asrStopRecording() {
   if (!_asrRecording || !_asrRecorder) return;
   _asrRecording = false;
   _asrRecorder.stop();
-  asrSetMic('⏳ Processing…', true, false);
+  asrSetMic('⏳ Recognising…', true, false);
 }
 
-/* Called automatically when navigating away / next card */
-function asrStopIfRecording() {
-  if (_asrRecording) asrStopRecording();
-}
+function asrStopIfRecording() { if (_asrRecording) asrStopRecording(); }
 
-/* Convert recorded audio to Float32Array at 16 kHz and run ASR */
-async function asrProcessAudio() {
+/* ── Send audio to Groq and compare result ── */
+async function asrProcess() {
   if (!_asrChunks.length) {
     asrSetFeedback('⚠️ No audio captured — try again.', '');
     asrSetMic('🎤 Speak', false, false);
     return;
   }
 
-  const blob        = new Blob(_asrChunks, { type: 'audio/webm' });
-  const arrayBuf    = await blob.arrayBuffer();
+  const blob = new Blob(_asrChunks, { type: 'audio/webm' });
+  const form = new FormData();
+  form.append('file',            blob,           'audio.webm');
+  form.append('model',           ASR_GROQ_MODEL);
+  form.append('language',        ASR_LANG);
+  form.append('response_format', 'json');
 
-  if (_asrAudioCtx) { try { _asrAudioCtx.close(); } catch {} }
-  _asrAudioCtx = new (window.AudioContext || window.webkitAudioContext)({ sampleRate: 16000 });
-
-  let float32;
+  let transcribed = '';
   try {
-    const audioBuf = await _asrAudioCtx.decodeAudioData(arrayBuf);
-    float32 = audioBuf.getChannelData(0);   // mono, 16 kHz
-  } catch {
-    asrSetFeedback('❌ Could not decode audio. Try recording again.', '#FEE2E2');
-    asrSetMic('🎤 Speak', false, false);
-    return;
-  }
-
-  // Wait for pipeline (it may still be downloading)
-  asrSetFeedback('⏳ Recognising speech…', '#EFF6FF');
-  const pipe = await asrGetPipeline();
-  if (!pipe) {
-    asrSetMic('🎤 Speak', false, false);
-    return;
-  }
-
-  try {
-    const result = await pipe(float32, {
-      language:     ASR_LANG,
-      task:         'transcribe',
-      sampling_rate: 16000,
+    const resp = await fetch(ASR_GROQ_URL, {
+      method:  'POST',
+      headers: { Authorization: `Bearer ${asrGetKey()}` },
+      body:    form,
     });
 
-    const transcribed = (result.text || '').trim();
-
-    if (!transcribed) {
-      asrSetFeedback('🤔 Couldn\'t make out the word — try speaking more clearly.', '');
+    if (resp.status === 401) {
+      asrClearKey();
+      asrSetFeedback('❌ Invalid Groq API key — please re-enter it.', '#FEE2E2');
       asrSetMic('🎤 Speak', false, false);
       return;
     }
-
-    if (studyIdx < studyWords.length) {
-      const { word } = studyWords[studyIdx];
-      const match    = asrCompare(transcribed, word.uyghur);
-
-      if (match) {
-        asrSetFeedback(
-          `✅ <strong>Correct!</strong> &nbsp;<span style="opacity:.75;font-size:.82rem">"${transcribed}"</span>`,
-          '#D1FAE5'
-        );
-      } else {
-        asrSetFeedback(
-          `🎯 You said: <strong>${transcribed}</strong><br>` +
-          `<span style="color:#64748B;font-size:.82rem">Expected: ${word.uyghur}</span>`,
-          '#FEF3C7'
-        );
-      }
+    if (!resp.ok) {
+      const err = await resp.json().catch(() => ({}));
+      throw new Error(err?.error?.message || `HTTP ${resp.status}`);
     }
+
+    const data = await resp.json();
+    transcribed = (data.text || '').trim();
   } catch (err) {
-    console.error('[ASR] transcription error:', err);
-    asrSetFeedback('❌ Transcription failed — try again.', '#FEE2E2');
+    console.error('[ASR] Groq error:', err);
+    asrSetFeedback(`❌ ${err.message || 'Request failed — check your internet connection.'}`, '#FEE2E2');
+    asrSetMic('🎤 Speak', false, false);
+    return;
+  }
+
+  if (!transcribed) {
+    asrSetFeedback('🤔 Couldn\'t make out the word — try speaking more clearly.', '');
+    asrSetMic('🎤 Speak', false, false);
+    return;
+  }
+
+  if (studyIdx < studyWords.length) {
+    const { word } = studyWords[studyIdx];
+    const match    = asrCompare(transcribed, word.uyghur);
+
+    if (match) {
+      asrSetFeedback(
+        `✅ <strong>Correct!</strong>&nbsp; <span style="opacity:.7;font-size:.82rem">"${transcribed}"</span>`,
+        '#D1FAE5'
+      );
+    } else {
+      asrSetFeedback(
+        `🎯 You said: <strong>${transcribed}</strong><br>` +
+        `<span style="color:#64748B;font-size:.82rem">Expected: ${word.uyghur}</span>`,
+        '#FEF3C7'
+      );
+    }
   }
 
   asrSetMic('🎤 Speak', false, false);
-  try { _asrAudioCtx.close(); } catch {}
 }
 
-/* Fuzzy text comparison (strips Arabic diacritics, allows 25 % edit distance) */
+/* ── Fuzzy comparison: strip diacritics, allow ≤25 % edit distance ── */
 function asrCompare(a, b) {
-  const norm = s => s
-    .replace(/[ً-ْٰؐ-ؚۖ-ۜ]/g, '') // strip harakat
-    .replace(/\s+/g, '')
-    .trim();
+  const norm = s => s.replace(/[ً-ْٰؐ-ؚۖ-ۜ]/g, '').replace(/\s+/g, '').trim();
   const na = norm(a), nb = norm(b);
   if (!na || !nb) return false;
   if (na === nb)  return true;
