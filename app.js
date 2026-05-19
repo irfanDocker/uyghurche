@@ -502,6 +502,12 @@ function showStudyCard() {
   if (asrFb) asrFb.innerHTML = '';
   asrStopIfRecording();
 
+  // Update Prev / Next button states
+  const prevBtn = document.getElementById('study-prev-btn');
+  const nextBtn = document.getElementById('study-next-btn');
+  if (prevBtn) prevBtn.disabled = (studyIdx === 0);
+  if (nextBtn) nextBtn.disabled = (studyIdx >= studyWords.length - 1);
+
   const pct = Math.round((studyIdx / studyWords.length) * 100);
   document.getElementById('study-progress').style.width = pct + '%';
   document.getElementById('study-counter').textContent = `${studyIdx + 1} / ${studyWords.length}`;
@@ -601,6 +607,14 @@ function showStudyComplete() {
   document.getElementById('study-done-practicing').textContent = studyPracticingCount;
   document.getElementById('study-done-xp').textContent        = studyXPEarned;
   updateLevelDisplay();
+}
+
+/* Navigate without marking progress — just move the card pointer */
+function navigateStudyCard(dir) {
+  const next = studyIdx + dir;
+  if (next < 0 || next >= studyWords.length) return;
+  studyIdx = next;
+  showStudyCard();
 }
 
 function repeatStudySession() { if (currentStudyCat) startStudySession(currentStudyCat); }

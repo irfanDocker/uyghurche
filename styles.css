@@ -1387,6 +1387,34 @@ footer a { color: #60A5FA; text-decoration: none; }
   color: #065F46;
 }
 
+/* Prev / Next navigation */
+.study-nav-row {
+  display: flex;
+  justify-content: center;
+  gap: .75rem;
+  margin: .5rem 0 .25rem;
+}
+.study-nav-btn {
+  background: none;
+  border: 1.5px solid var(--border);
+  border-radius: 99px;
+  padding: .4rem 1.4rem;
+  font-size: .9rem;
+  font-weight: 600;
+  cursor: pointer;
+  color: var(--muted);
+  transition: background .15s, color .15s, border-color .15s;
+  min-width: 90px;
+}
+.study-nav-btn:hover:not(:disabled) {
+  background: var(--border);
+  color: var(--text);
+}
+.study-nav-btn:disabled {
+  opacity: .3;
+  cursor: default;
+}
+
 /* Speak button */
 .study-speak-row {
   text-align: center;

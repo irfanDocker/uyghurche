@@ -580,6 +580,13 @@
         <button class="study-btn-learning" onclick="markStudyWord(false)">🔄 Still Learning</button>
         <button class="study-btn-known"    onclick="markStudyWord(true)">✓ Know it! +1 XP</button>
       </div>
+
+      <!-- Prev / Next navigation -->
+      <div class="study-nav-row">
+        <button class="study-nav-btn" id="study-prev-btn" onclick="navigateStudyCard(-1)">← Prev</button>
+        <button class="study-nav-btn" id="study-next-btn" onclick="navigateStudyCard(1)">Next →</button>
+      </div>
+
       <p class="study-speak-row">
         <button class="study-speak-btn" onclick="speakStudyWord()">🔊 Listen</button>
         <button class="study-mic-btn" id="study-mic-btn" onclick="toggleASRRecording()" title="Practice your pronunciation">🎤 Speak</button>
