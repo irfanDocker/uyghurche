@@ -498,6 +498,9 @@ function showStudyCard() {
 
   document.getElementById('study-card-inner').classList.remove('flipped');
   document.getElementById('study-actions').classList.add('hidden');
+  const asrFb = document.getElementById('study-asr-feedback');
+  if (asrFb) asrFb.innerHTML = '';
+  asrStopIfRecording();
 
   const pct = Math.round((studyIdx / studyWords.length) * 100);
   document.getElementById('study-progress').style.width = pct + '%';
@@ -597,11 +600,234 @@ function showStudyComplete() {
 function repeatStudySession() { if (currentStudyCat) startStudySession(currentStudyCat); }
 
 function backToStudyHome() {
+  asrStopIfRecording();
   document.getElementById('study-session').classList.add('hidden');
   document.getElementById('study-complete').classList.add('hidden');
   document.getElementById('study-home').classList.remove('hidden');
   window.speechSynthesis && window.speechSynthesis.cancel();
   renderStudyHome();
+}
+
+// ── ASR — Pronunciation Practice (Transformers.js / Whisper) ──
+let _asrPipeline    = null;
+let _asrLoadState   = 'idle';   // 'idle' | 'loading' | 'ready' | 'error'
+let _asrRecorder    = null;
+let _asrChunks      = [];
+let _asrRecording   = false;
+let _asrAudioCtx    = null;
+let _pendingAudio   = null;     // Float32Array waiting while model loads
+
+const ASR_MODEL   = 'onnx-community/whisper-tiny';
+const ASR_DTYPE   = 'q4';       // ~40 MB download, cached in IndexedDB after first use
+const ASR_LANG    = 'ug';       // Uyghur
+const ASR_MAX_SEC = 4;          // auto-stop recording after 4 s
+
+function asrMicBtn()      { return document.getElementById('study-mic-btn'); }
+function asrFeedback()    { return document.getElementById('study-asr-feedback'); }
+
+function asrSetFeedback(html, bg) {
+  const el = asrFeedback();
+  if (!el) return;
+  el.innerHTML = html;
+  el.style.background = bg || '';
+}
+
+function asrSetMic(label, loading, recording) {
+  const btn = asrMicBtn();
+  if (!btn) return;
+  btn.textContent = label;
+  btn.disabled    = !!loading;
+  btn.classList.toggle('recording', !!recording);
+}
+
+/* Load the whisper pipeline lazily — called once, then returns cached */
+async function asrGetPipeline() {
+  if (_asrPipeline)             return _asrPipeline;
+  if (_asrLoadState === 'error') return null;
+  if (_asrLoadState === 'loading') {
+    // wait up to 120 s for the ongoing load
+    for (let i = 0; i < 240; i++) {
+      await new Promise(r => setTimeout(r, 500));
+      if (_asrPipeline)              return _asrPipeline;
+      if (_asrLoadState === 'error') return null;
+    }
+    return null;
+  }
+
+  _asrLoadState = 'loading';
+  asrSetFeedback('⏳ Downloading speech model (~40 MB, one-time) …', '#FEF3C7');
+
+  try {
+    const { pipeline, env } = await import(
+      'https://cdn.jsdelivr.net/npm/@huggingface/transformers@3/dist/transformers.min.js'
+    );
+    env.useBrowserCache = true;           // cache model weights in IndexedDB
+
+    _asrPipeline = await pipeline(
+      'automatic-speech-recognition',
+      ASR_MODEL,
+      { dtype: ASR_DTYPE }
+    );
+    _asrLoadState = 'ready';
+    asrSetFeedback('');
+    return _asrPipeline;
+  } catch (err) {
+    console.error('[ASR] load error:', err);
+    _asrLoadState = 'error';
+    asrSetFeedback('❌ Could not load speech model. Check your internet connection.', '#FEE2E2');
+    asrSetMic('🎤 Speak', false, false);
+    return null;
+  }
+}
+
+/* Entry point — called by the Speak button */
+async function toggleASRRecording() {
+  if (_asrRecording) { asrStopRecording(); return; }
+
+  // Check browser support
+  if (!navigator.mediaDevices || !navigator.mediaDevices.getUserMedia) {
+    asrSetFeedback('❌ Your browser does not support microphone access.', '#FEE2E2');
+    return;
+  }
+
+  let stream;
+  try {
+    stream = await navigator.mediaDevices.getUserMedia({ audio: true });
+  } catch {
+    asrSetFeedback('❌ Microphone access was denied. Please allow it in your browser settings.', '#FEE2E2');
+    return;
+  }
+
+  // Kick off model pre-load in the background while we record
+  if (_asrLoadState === 'idle') asrGetPipeline();
+
+  _asrChunks   = [];
+  _asrRecording = true;
+  asrSetMic('⏹ Stop', false, true);
+  asrSetFeedback('🔴 Recording… say the word clearly', '');
+
+  const mimeType = MediaRecorder.isTypeSupported('audio/webm;codecs=opus')
+    ? 'audio/webm;codecs=opus' : 'audio/webm';
+  _asrRecorder = new MediaRecorder(stream, { mimeType });
+  _asrRecorder.ondataavailable = e => { if (e.data.size) _asrChunks.push(e.data); };
+  _asrRecorder.onstop = () => {
+    stream.getTracks().forEach(t => t.stop());
+    asrProcessAudio();
+  };
+  _asrRecorder.start(100);
+
+  setTimeout(() => { if (_asrRecording) asrStopRecording(); }, ASR_MAX_SEC * 1000);
+}
+
+function asrStopRecording() {
+  if (!_asrRecording || !_asrRecorder) return;
+  _asrRecording = false;
+  _asrRecorder.stop();
+  asrSetMic('⏳ Processing…', true, false);
+}
+
+/* Called automatically when navigating away / next card */
+function asrStopIfRecording() {
+  if (_asrRecording) asrStopRecording();
+}
+
+/* Convert recorded audio to Float32Array at 16 kHz and run ASR */
+async function asrProcessAudio() {
+  if (!_asrChunks.length) {
+    asrSetFeedback('⚠️ No audio captured — try again.', '');
+    asrSetMic('🎤 Speak', false, false);
+    return;
+  }
+
+  const blob        = new Blob(_asrChunks, { type: 'audio/webm' });
+  const arrayBuf    = await blob.arrayBuffer();
+
+  if (_asrAudioCtx) { try { _asrAudioCtx.close(); } catch {} }
+  _asrAudioCtx = new (window.AudioContext || window.webkitAudioContext)({ sampleRate: 16000 });
+
+  let float32;
+  try {
+    const audioBuf = await _asrAudioCtx.decodeAudioData(arrayBuf);
+    float32 = audioBuf.getChannelData(0);   // mono, 16 kHz
+  } catch {
+    asrSetFeedback('❌ Could not decode audio. Try recording again.', '#FEE2E2');
+    asrSetMic('🎤 Speak', false, false);
+    return;
+  }
+
+  // Wait for pipeline (it may still be downloading)
+  asrSetFeedback('⏳ Recognising speech…', '#EFF6FF');
+  const pipe = await asrGetPipeline();
+  if (!pipe) {
+    asrSetMic('🎤 Speak', false, false);
+    return;
+  }
+
+  try {
+    const result = await pipe(float32, {
+      language:     ASR_LANG,
+      task:         'transcribe',
+      sampling_rate: 16000,
+    });
+
+    const transcribed = (result.text || '').trim();
+
+    if (!transcribed) {
+      asrSetFeedback('🤔 Couldn\'t make out the word — try speaking more clearly.', '');
+      asrSetMic('🎤 Speak', false, false);
+      return;
+    }
+
+    if (studyIdx < studyWords.length) {
+      const { word } = studyWords[studyIdx];
+      const match    = asrCompare(transcribed, word.uyghur);
+
+      if (match) {
+        asrSetFeedback(
+          `✅ <strong>Correct!</strong> &nbsp;<span style="opacity:.75;font-size:.82rem">"${transcribed}"</span>`,
+          '#D1FAE5'
+        );
+      } else {
+        asrSetFeedback(
+          `🎯 You said: <strong>${transcribed}</strong><br>` +
+          `<span style="color:#64748B;font-size:.82rem">Expected: ${word.uyghur}</span>`,
+          '#FEF3C7'
+        );
+      }
+    }
+  } catch (err) {
+    console.error('[ASR] transcription error:', err);
+    asrSetFeedback('❌ Transcription failed — try again.', '#FEE2E2');
+  }
+
+  asrSetMic('🎤 Speak', false, false);
+  try { _asrAudioCtx.close(); } catch {}
+}
+
+/* Fuzzy text comparison (strips Arabic diacritics, allows 25 % edit distance) */
+function asrCompare(a, b) {
+  const norm = s => s
+    .replace(/[ً-ْٰؐ-ؚۖ-ۜ]/g, '') // strip harakat
+    .replace(/\s+/g, '')
+    .trim();
+  const na = norm(a), nb = norm(b);
+  if (!na || !nb) return false;
+  if (na === nb)  return true;
+  const dist = asrLevenshtein(na, nb);
+  return dist / Math.max(na.length, nb.length) <= 0.25;
+}
+
+function asrLevenshtein(a, b) {
+  const m = a.length, n = b.length;
+  const dp = Array.from({ length: m + 1 }, (_, i) =>
+    Array.from({ length: n + 1 }, (_, j) => (i === 0 ? j : j === 0 ? i : 0))
+  );
+  for (let i = 1; i <= m; i++)
+    for (let j = 1; j <= n; j++)
+      dp[i][j] = a[i-1] === b[j-1]
+        ? dp[i-1][j-1]
+        : 1 + Math.min(dp[i-1][j], dp[i][j-1], dp[i-1][j-1]);
+  return dp[m][n];
 }
 
 // ── Alphabet ──

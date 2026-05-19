@@ -1404,6 +1404,44 @@ footer a { color: #60A5FA; text-decoration: none; }
 }
 .study-speak-btn:hover { background: var(--border); }
 
+/* Mic / Pronunciation button */
+.study-mic-btn {
+  background: none;
+  border: 1.5px solid var(--border);
+  border-radius: 99px;
+  padding: .35rem 1.1rem;
+  font-size: .9rem;
+  cursor: pointer;
+  color: var(--muted);
+  transition: background .15s, border-color .2s, color .2s;
+  margin-left: .5rem;
+}
+.study-mic-btn:hover:not(:disabled) { background: var(--border); }
+.study-mic-btn:disabled { opacity: .6; cursor: default; }
+.study-mic-btn.recording {
+  background: #EF4444;
+  border-color: #EF4444;
+  color: #fff;
+  animation: mic-pulse 1.1s ease-in-out infinite;
+}
+@keyframes mic-pulse {
+  0%, 100% { opacity: 1; transform: scale(1); }
+  50%       { opacity: .75; transform: scale(.97); }
+}
+
+/* ASR feedback strip */
+.study-asr-feedback {
+  text-align: center;
+  min-height: 1.9rem;
+  margin: .3rem .5rem 0;
+  font-size: .88rem;
+  line-height: 1.45;
+  padding: .2rem .75rem;
+  border-radius: 10px;
+  transition: opacity .25s;
+}
+.study-asr-feedback:empty { min-height: 0; }
+
 /* Session complete */
 .study-complete-box {
   background: white;
